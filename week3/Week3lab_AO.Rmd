@@ -1,0 +1,85 @@
+---
+title: "Lab 3"
+author: "Audrey Omidsalar"
+date: "9/10/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## 1. Read in the Data
+
+```{r}
+download.file("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/02_met/met_all.gz", "met_all.gz", method="libcurl", timeout = 60)
+met <- data.table::fread("met_all.gz")
+
+```
+
+## 2. Check the dimensions, headers, footers. How many columns, rows are there?
+
+There are 2377343 rows and 30 columns
+
+
+```{r}
+dim(met)
+```
+```{r}
+head(met)
+```
+```{r}
+tail(met)
+```
+## 3. Take a look at the variables
+```{r}
+str(met)
+```
+## 4. Take a closer look at the key variables
+```{r}
+table(met$year)
+```
+```{r}
+table(met$day)
+```
+```{r}
+table(met$hour)
+```
+```{r}
+summary(met$temp)
+```
+```{r}
+summary(met$elev)
+```
+```{r}
+summary(met$wind.sp)
+```
+After checking the data we should make the appropriate modifications. Replace elevations with 9999 as NA.
+```{r}
+met[met$elev==9999.0] <- NA
+summary(met$elev)
+```
+The weather station with highest elevation is 4113 meter (after replacing elevations of 9999 with NA)
+```{r}
+met <- met[temp>-40]
+met2 <- met[order(temp)]
+head(met2)
+tail(met2)
+```
+## 5. Check the data against an external data source
+```{r}
+met <- met[temp>-15]
+met2 <- met[order(temp)]
+head(met2)
+```
+## 6. Calculate summary statistics
+```{r}
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
