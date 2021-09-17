@@ -13,11 +13,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library('leaflet')
 library('lubridate')
 library('data.table')
+library('tidyverse')
+library('ggplot2')
 ```
 
 ## 1. Read in the Data
 
-```{r}
+```{r cache=TRUE}
 if (!file.exists("met_all.gz"))
   download.file(
     url = "https://raw.githubusercontent.com/USCbiostats/data-science-data/master/02_met/met_all.gz",
@@ -30,14 +32,14 @@ met <- data.table::fread("met_all.gz")
 
 ## 2. Prepare the data
 
-Remove temperatures less than -17C
+#### Remove temperatures less than -17C
 
 ```{r filter temps}
 met <- met[temp>=-17]
 summary(met)
 ```
-After checking the data we should make the appropriate modifications. Replace elevations with 9999 as NA.
-```{r check for NA}
+#### After checking the data we should make the appropriate modifications.
+```{r check for NA, include=FALSE}
 met[,table(is.na(temp))]
 met[,table(is.na(rh))]
 met[,table(is.na(wind.sp))]
@@ -48,7 +50,7 @@ met[,table(is.na(lon))]
 met[,table(is.na(elev))]
 
 ```
-```{r}
+```{r, include=FALSE}
 met[,range(temp)]
 met[,range(rh, na.rm = TRUE)]
 met[,range(wind.sp, na.rm=TRUE)]
@@ -63,23 +65,23 @@ Replace 9999 in elevation with NA
 met[elev == 9999.0, elev := NA]
 ```
 
-Generate a date variable
+#### Generate a date variable
 ```{r date}
 met[, ymd := as.Date(paste(year, month, day, sep = "-"))]
 ```
 
-Using the data.table::week function, keep the observations of the first week of the month.
+#### Using the data.table::week function, keep the observations of the first week of the month.
 
 This outputs the week numbers according to ymd. For example, week 31 is the first week in August
 ```{r}
 met[,table(week(ymd))]
 ```
-Keep only the first week of the month, week=31
-```{r}
+#### Keep only the first week of the month, week=31
+```{r first week}
 met <- met[week(ymd) == 31]
 ```
-Compute the mean by station of the variables temp, rh, wind.sp, vis.dist, dew.point, lat, lon, and elev.
-```{r}
+#### Compute the mean by station of the variables temp, rh, wind.sp, vis.dist, dew.point, lat, lon, and elev. Creating a new datatable met_avg that stores these values.
+```{r mean}
 met_avg <- met[, .(
   temp     = mean(temp, na.rm=TRUE),
   rh       = mean(rh, na.rm=TRUE),
@@ -91,5 +93,16 @@ met_avg <- met[, .(
   elev     = mean(elev, na.rm=TRUE), USAFID
 ), by = "USAFID"]
 ```
-
+#### Create a region variable for Northwest, Southwest, Northeast, Southeast based on lon = -98.00 and lat = 39.71 degrees. Count number of observations of each region variable.
+```{r, cache=TRUE}
+met_avg[lat >= 39.71 & lon <= -98, region := "Northwest"]
+met_avg[lat < 39.71 & lon <= -98, region := "Southwest"]
+met_avg[lat >= 39.71 & lon > -98, region := "Northeast"]
+met_avg[lat < 39.71 & lon > -98, region := "Southeast"]
+met_avg[, table(region, useNA="always")]
+```
+#### Create a categorical variable for elevation
+```{r, cache=TRUE}
+met_avg[,elev_cat := fifelse(elev > 252, "high", "low")]
+```
 
