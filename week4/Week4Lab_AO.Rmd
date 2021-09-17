@@ -1,0 +1,95 @@
+---
+title: "Week 4 Lab"
+author: "Audrey Omidsalar"
+date: "9/17/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library('leaflet')
+library('lubridate')
+library('data.table')
+```
+
+## 1. Read in the Data
+
+```{r}
+if (!file.exists("met_all.gz"))
+  download.file(
+    url = "https://raw.githubusercontent.com/USCbiostats/data-science-data/master/02_met/met_all.gz",
+    destfile = "met_all.gz",
+    method   = "libcurl",
+    timeout  = 60
+    )
+met <- data.table::fread("met_all.gz")
+```
+
+## 2. Prepare the data
+
+Remove temperatures less than -17C
+
+```{r filter temps}
+met <- met[temp>=-17]
+summary(met)
+```
+After checking the data we should make the appropriate modifications. Replace elevations with 9999 as NA.
+```{r check for NA}
+met[,table(is.na(temp))]
+met[,table(is.na(rh))]
+met[,table(is.na(wind.sp))]
+met[,table(is.na(vis.dist))]
+met[,table(is.na(dew.point))]
+met[,table(is.na(lat))]
+met[,table(is.na(lon))]
+met[,table(is.na(elev))]
+
+```
+```{r}
+met[,range(temp)]
+met[,range(rh, na.rm = TRUE)]
+met[,range(wind.sp, na.rm=TRUE)]
+met[,range(vis.dist, na.rm=TRUE)]
+met[,range(dew.point, na.rm=TRUE)]
+met[,range(lat, na.rm=TRUE)]
+met[,range(lon, na.rm=TRUE)]
+met[,range(elev, na.rm=TRUE)]
+```
+Replace 9999 in elevation with NA
+```{r replace with NA}
+met[elev == 9999.0, elev := NA]
+```
+
+Generate a date variable
+```{r date}
+met[, ymd := as.Date(paste(year, month, day, sep = "-"))]
+```
+
+Using the data.table::week function, keep the observations of the first week of the month.
+
+This outputs the week numbers according to ymd. For example, week 31 is the first week in August
+```{r}
+met[,table(week(ymd))]
+```
+Keep only the first week of the month, week=31
+```{r}
+met <- met[week(ymd) == 31]
+```
+Compute the mean by station of the variables temp, rh, wind.sp, vis.dist, dew.point, lat, lon, and elev.
+```{r}
+met_avg <- met[, .(
+  temp     = mean(temp, na.rm=TRUE),
+  rh       = mean(rh, na.rm=TRUE),
+  wind.sp  = mean(wind.sp, na.rm=TRUE),
+  vis.dist = mean(vis.dist, na.rm=TRUE),
+  dew.point= mean(dew.point, na.rm=TRUE),
+  lat      = mean(lat, na.rm=TRUE),
+  lon      = mean(lon, na.rm=TRUE),
+  elev     = mean(elev, na.rm=TRUE), USAFID
+), by = "USAFID"]
+```
+
+
