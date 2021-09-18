@@ -189,7 +189,7 @@ ggplot(met_avg[!is.na(dew.point)], mapping=aes(x=region, y=dew.point)) +
 ## 7. Make a map showing the spatial trend in relative h in the US
 
 Relative humidity temperature tends to increase as we move from western to eastern US.
-```{r, cache=TRUE}
+```{r leaflet, cache=TRUE}
 met_avg2 <- met_avg[!is.na(rh)]
 temp.pal <- colorNumeric(c('darkgreen', 'goldenrod', 'brown'), domain = met_avg2$rh)
 
@@ -207,7 +207,7 @@ leaflet(met_avg2) %>%
 ## 8. Use a ggplot extension: ggpubr
 
 ggpubr can be used to create publication-ready plots, including ones that have p-values included. This graph is a boxplot of relative humidity per region, with p values across groups added.
-```{r, cache=TRUE}
+```{r ggpubr, cache=TRUE}
 p <- ggboxplot(met_avg2, x = "region", y = "rh", color="region")
 my_comparisons <- list( c("Southwest", "Northeast"),c("Northeast", "Southeast"), c("Southeast", "Northwest"), c("Southwest", "Southeast"), c("Northeast", "Northwest"))
 p + stat_compare_means(comparisons = my_comparisons) # Add pairwise comparisons p-value
