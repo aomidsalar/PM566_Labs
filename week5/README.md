@@ -1,0 +1,112 @@
+---
+title: "Week 5 Lab"
+author: "Audrey Omidsalar"
+date: "9/24/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    keep_md: yes
+  github_document:
+  always_allow_html: true
+---
+
+
+
+## Load Data
+
+
+```r
+if (!file.exists("met_all.gz"))
+  download.file(
+    url = "https://raw.githubusercontent.com/USCbiostats/data-science-data/master/02_met/met_all.gz",
+    destfile = "met_all.gz",
+    method   = "libcurl",
+    timeout  = 60
+    )
+met <- data.table::fread("met_all.gz")
+
+if (!file.exists("isd-history.csv"))
+  download.file(
+    url = "ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv",
+    destfile = "isd-history.csv",
+    method   = "libcurl",
+    timeout  = 60
+    )
+stations <- fread("isd-history.csv")
+```
+
+### Processing / Filtering Data
+
+
+```r
+stations[, USAF := as.integer(USAF)]
+```
+
+```
+## Warning in eval(jsub, SDenv, parent.frame()): NAs introduced by coercion
+```
+
+```r
+# Dealing with NAs and 999999
+stations[, USAF   := fifelse(USAF == "999999", NA_integer_, USAF)]
+stations[, CTRY   := fifelse(CTRY == "", NA_character_, CTRY)]
+stations[, STATE  := fifelse(STATE == "", NA_character_, STATE)]
+
+# Selecting the three relevant columns, and keeping unique records
+stations <- unique(stations[, list(USAF, CTRY, STATE)])
+
+# Dropping NAs
+stations <- stations[!is.na(USAF)]
+
+# Removing duplicates
+stations[, n := 1:.N, by = .(USAF)]
+stations <- stations[n == 1,][, n := NULL]
+```
+### Merge the data
+
+```r
+##quick way to remove duplicates
+stations[, n := 1:.N, by = .(USAF)]
+stations <- stations[n == 1,][, n := NULL]
+merged <- merge(
+  # Data
+  x     = met,      
+  y     = stations, 
+  # List of variables to match
+  by.x  = "USAFID",
+  by.y  = "USAF", 
+  # Which obs to keep?
+  all.x = TRUE,      
+  all.y = FALSE
+  )
+```
+## Question 1: Representative Station for the US
+
+
+```r
+##There are multiple measurements per station. We have to summarize the data first to characterize each station
+merged_station_avg <- merged[, .(
+  temp      = mean(temp, na.rm=TRUE),
+  wind.sp   = mean(wind.sp, na.rm=TRUE),
+  atm.press = mean(atm.press, na.rm=TRUE)), by = "USAFID"
+]
+##Now find the quantiles per variable
+merged_station_avg[,.(
+  temp_50      = quantile(temp, probs=0.5, na.rm=TRUE),
+  wind.sp_50   = quantile(wind.sp, probs=0.5, na.rm=TRUE),
+  atm.press_50 = quantile(atm.press, probs=0.5, na.rm=TRUE)
+)]
+```
+
+```
+##     temp_50 wind.sp_50 atm.press_50
+## 1: 23.68406   2.461838     1014.691
+```
+
+```r
+##Print the station that corresponds to these
+```
+
+```
+
