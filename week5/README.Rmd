@@ -158,22 +158,26 @@ leaflet(centers) %>%
   addCircles(lng = ~lon, lat = ~lat, color=~ifelse(label=="Center of the state",'pink','orange'), opacity=1,fillOpacity=0.7, radius=100)
 ```
 
-## Question 4 - state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable
+## Question 4 - Mean of Means
+state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable
 ```{r}
-#met[, state_temp := mean(temp, na.rm=TRUE), by = "STATE"]
-#met[,temp_cat := fifelse(state_temp < 20, "low",
-#                         fifelse(state_temp < 25, "mid", "high"))]
+merged[, state_temp_mean := mean(temp, na.rm=TRUE), by = "STATE"]
+merged[, temp_cat := fifelse(state_temp_mean < 20, "low",
+                         fifelse(state_temp_mean < 25, "mid", "high"))]
 #table(met$temp_cat, useNA = "always") ##will also show number of NA's
 ```
 Summary table
 ```{r}
-#tab <- met[, .(
-#  N_entries = .N,
-#  N_stations = length(unique(USAFID)),
-#  N_states = length(unique(STATE))
-#)
-#    , by = "temp_cat"]
+tab <- merged[, .(
+  N_entries      = .N,
+  N_stations     = length(unique(USAFID)),
+  N_states       = length(unique(STATE)),
+  mean_temp      = mean(temp, na.rm=TRUE),
+  mean_wind.sp   = mean(wind.sp, na.rm=TRUE),
+  mean_atm.press = mean(atm.press, na.rm=TRUE)
+)
+    , by = "temp_cat"]
 ##make the table look pretty
-#knitr::kable(tab)
+knitr::kable(tab)
 ```
 
