@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library('data.table')
 library('dtplyr')
 library('dplyr')
+library('leaflet')
 ```
 
 ## Load Data
@@ -76,7 +77,7 @@ merged <- merge(
 merged_station_avg <- merged[, .(
   temp      = mean(temp, na.rm=TRUE),
   wind.sp   = mean(wind.sp, na.rm=TRUE),
-  atm.press = mean(atm.press, na.rm=TRUE)), by = c("USAFID", "STATE")
+  atm.press = mean(atm.press, na.rm=TRUE), lat, lon), by = c("USAFID", "STATE")
 ]
 ```
 ### Now find the quantiles per variable
@@ -128,12 +129,33 @@ merged_station_avg_noNA[, eudist := sqrt((temp - temp_med_state)^2 + (wind.sp - 
 merged_station_avg_noNA
 ```
 ```{r}
-merged_station_avg_noNA[ , .SD[which.min(eudist)], by = STATE]
+center_3vars <- merged_station_avg_noNA[ , .SD[which.min(eudist)], by = STATE]
+center_3vars
 ```
-## Question 3
+## Question 3: In the Middle?
+For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question.
 for each state, find median lat and long..find distance using euclidean
 ```{r}
-
+##Finding median latitude and longitude
+merged[, lat_median := quantile(lat, probs=.5, na.rm=TRUE), by = "STATE"]
+merged[, lon_median := quantile(lon, probs=.5, na.rm=TRUE), by = "STATE"]
+##Finding the Euclidean distances
+merged[, eudist_latlon := sqrt((lat - lat_median)^2 + (lon - lon_median)^2)]
+##Outputting rows with minimum Euclidean distance per state
+center_state <- merged[ , .SD[which.min(eudist_latlon)], by = STATE]
+center_state
+```
+Combine the two datasets
+```{r}
+center_state[, label := "Center of the state"]
+center_3vars[, label := "Center of wind speed, temperature, and atmospheric pressure"]
+centers <- rbind(center_state, center_3vars, fill=TRUE)
+```
+Create map
+```{r}
+leaflet(centers) %>%
+  addProviderTiles("OpenStreetMap") %>%
+  addCircles(lng = ~lon, lat = ~lat, color=~ifelse(label=="Center of the state",'pink','orange'), opacity=1,fillOpacity=0.7, radius=100)
 ```
 
 ## Question 4 - state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable
