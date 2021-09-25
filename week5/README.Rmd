@@ -30,14 +30,7 @@ if (!file.exists("met_all.gz"))
     )
 met <- data.table::fread("met_all.gz")
 
-if (!file.exists("isd-history.csv"))
-  download.file(
-    url = "ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv",
-    destfile = "isd-history.csv",
-    method   = "libcurl",
-    timeout  = 60
-    )
-stations <- fread("isd-history.csv")
+stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 ```
 
 ### Processing / Filtering Data
@@ -83,16 +76,82 @@ merged <- merge(
 merged_station_avg <- merged[, .(
   temp      = mean(temp, na.rm=TRUE),
   wind.sp   = mean(wind.sp, na.rm=TRUE),
-  atm.press = mean(atm.press, na.rm=TRUE)), by = "USAFID"
+  atm.press = mean(atm.press, na.rm=TRUE)), by = c("USAFID", "STATE")
 ]
-##Now find the quantiles per variable
-merged_station_avg[,.(
-  temp_50      = quantile(temp, probs=0.5, na.rm=TRUE),
-  wind.sp_50   = quantile(wind.sp, probs=0.5, na.rm=TRUE),
-  atm.press_50 = quantile(atm.press, probs=0.5, na.rm=TRUE)
-)]
-##Print the station that corresponds to these
+```
+### Now find the quantiles per variable
+```{r median}
+merged_station_avg[, temp_med := quantile(temp, probs=0.5, na.rm=TRUE)]
+merged_station_avg[, wind.sp_med := quantile(wind.sp, probs=0.5, na.rm=TRUE)]
+merged_station_avg[, atm.press_med := quantile(atm.press, probs=0.5, na.rm=TRUE)]
+
+
+#medians <- merged_station_avg[,.(
+#  temp_50      = quantile(temp, probs=0.5, na.rm=TRUE),
+#  wind.sp_50   = quantile(wind.sp, probs=0.5, na.rm=TRUE),
+#  atm.press_50 = quantile(atm.press, probs=0.5, na.rm=TRUE)
+#)]
+#medians
+```
+### Find the station that is closest to these median values using which.min()
+The median temperature station is at USAFID 720458.
+The median wind speed station is at USAFID 720929.
+The median atmospheric pressure station is at USAFID 722238.
+The median stations for these three variables do not coincide.
+```{r}
+merged_station_avg[which.min(abs(temp - temp_med))]
+merged_station_avg[which.min(abs(wind.sp - wind.sp_med))]
+merged_station_avg[which.min(abs(atm.press - atm.press_med))]
+#another method
+#merged_station_avg[, temp_dist := abs(temp - medians$temp_50)]
+#median_temp_station <- merged_station_avg[order(temp_dist)][1]
+#median_temp_station
+```
+## Question 2 Representative Station per State
+```{r}
+## add state column by merging
+#merged_station_avg <- merge(x = merged_station_avg, y = stations, by.x = "USAFID", by.y = "USAF", all.x = TRUE, all.y=FALSE)
+##Compute the median per state
+merged_station_avg[,temp_med_state := quantile(temp, probs=.5, na.rm=TRUE), by = "STATE"]
+merged_station_avg[,wind.sp_med_state := quantile(wind.sp, probs=.5, na.rm=TRUE), by = "STATE"]
+merged_station_avg[,atm.press_med_state := quantile(atm.press, probs=.5, na.rm=TRUE), by = "STATE"]
 ```
 
+```{r}
+##Compute the Euclidean distance
+summary(merged_station_avg$temp)
+summary(merged_station_avg$wind.sp)
+summary(merged_station_avg$atm.press)
+##These datasets have NA's. Remove them to be able to calculate Euclidean distance.
+merged_station_avg_noNA <- merged_station_avg[!is.na(temp) & !is.na(wind.sp) & !is.na(atm.press)]
+merged_station_avg_noNA[, eudist := sqrt((temp - temp_med_state)^2 + (wind.sp - wind.sp_med_state)^2 + (atm.press - atm.press_med_state)^2)]
+merged_station_avg_noNA
+```
+```{r}
+merged_station_avg_noNA[ , .SD[which.min(eudist)], by = STATE]
+```
+## Question 3
+for each state, find median lat and long..find distance using euclidean
+```{r}
+
+```
+
+## Question 4 - state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable
+```{r}
+#met[, state_temp := mean(temp, na.rm=TRUE), by = "STATE"]
+#met[,temp_cat := fifelse(state_temp < 20, "low",
+#                         fifelse(state_temp < 25, "mid", "high"))]
+#table(met$temp_cat, useNA = "always") ##will also show number of NA's
+```
+Summary table
+```{r}
+#tab <- met[, .(
+#  N_entries = .N,
+#  N_stations = length(unique(USAFID)),
+#  N_states = length(unique(STATE))
+#)
+#    , by = "temp_cat"]
+##make the table look pretty
+#knitr::kable(tab)
 ```
 
