@@ -34,7 +34,7 @@ met <- data.table::fread("met_all.gz")
 stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 ```
 
-### Processing / Filtering Data
+## Processing / Filtering Data
 
 ```{r filtering}
 stations[, USAF := as.integer(USAF)]
@@ -71,6 +71,7 @@ merged <- merge(
   )
 ```
 ## Question 1: Representative Station for the US
+### What is the median station in terms of temperature, wind speed, and atmospheric pressure? Look for the three weather stations that best represent continental US using the quantile() function. Do these three coincide?
 
 ```{r question1}
 ##There are multiple measurements per station. We have to summarize the data first to characterize each station
@@ -109,6 +110,7 @@ merged_station_avg[which.min(abs(atm.press - atm.press_med))]
 #median_temp_station
 ```
 ## Question 2 Representative Station per State
+### Just like the previous question, you are asked to identify what is the most representative, the median, station per state. This time, instead of looking at one variable at a time, look at the euclidean distance. If multiple stations show in the median, select the one located at the lowest latitude.
 ```{r}
 ## add state column by merging
 #merged_station_avg <- merge(x = merged_station_avg, y = stations, by.x = "USAFID", by.y = "USAF", all.x = TRUE, all.y=FALSE)
@@ -126,20 +128,21 @@ summary(merged_station_avg$atm.press)
 ##These datasets have NA's. Remove them to be able to calculate Euclidean distance.
 merged_station_avg_noNA <- merged_station_avg[!is.na(temp) & !is.na(wind.sp) & !is.na(atm.press)]
 merged_station_avg_noNA[, eudist := sqrt((temp - temp_med_state)^2 + (wind.sp - wind.sp_med_state)^2 + (atm.press - atm.press_med_state)^2)]
+##output data table with euclidean distance annotated
 merged_station_avg_noNA
 ```
+This `center_3vars` dataset shows the station with the minimum Euclidean distance (in terms of temperature, wind speed and atmospheric pressure) per state.
 ```{r}
 center_3vars <- merged_station_avg_noNA[ , .SD[which.min(eudist)], by = STATE]
 center_3vars
 ```
 ## Question 3: In the Middle?
-For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question.
-for each state, find median lat and long..find distance using euclidean
+### For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question.
 ```{r}
-##Finding median latitude and longitude
+##Finding median latitude and longitude per state
 merged[, lat_median := quantile(lat, probs=.5, na.rm=TRUE), by = "STATE"]
 merged[, lon_median := quantile(lon, probs=.5, na.rm=TRUE), by = "STATE"]
-##Finding the Euclidean distances
+##Finding the Euclidean distances between latitude and longitude
 merged[, eudist_latlon := sqrt((lat - lat_median)^2 + (lon - lon_median)^2)]
 ##Outputting rows with minimum Euclidean distance per state
 center_state <- merged[ , .SD[which.min(eudist_latlon)], by = STATE]
@@ -151,25 +154,28 @@ center_state[, label := "Center of the state"]
 center_3vars[, label := "Center of wind speed, temperature, and atmospheric pressure"]
 centers <- rbind(center_state, center_3vars, fill=TRUE)
 ```
-Create map
+Create map. The median center of state stations are shown in pink, and the stations corresponding to the median of the three variables (wind speed, atmospheric pressure and temperature) are in orange.
 ```{r}
 leaflet(centers) %>%
   addProviderTiles("OpenStreetMap") %>%
   addCircles(lng = ~lon, lat = ~lat, color=~ifelse(label=="Center of the state",'pink','orange'), opacity=1,fillOpacity=0.7, radius=100)
 ```
-
 ## Question 4 - Mean of Means
-state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable
+
 ```{r}
+##creating average temperature per state
 merged[, state_temp_mean := mean(temp, na.rm=TRUE), by = "STATE"]
+##annotating temperature categories
 merged[, temp_cat := fifelse(state_temp_mean < 20, "low",
                          fifelse(state_temp_mean < 25, "mid", "high"))]
 #table(met$temp_cat, useNA = "always") ##will also show number of NA's
 ```
 Summary table
 ```{r}
+##creating table with assigned variables
 tab <- merged[, .(
   N_entries      = .N,
+  N_na           = sum(is.na(temp)),
   N_stations     = length(unique(USAFID)),
   N_states       = length(unique(STATE)),
   mean_temp      = mean(temp, na.rm=TRUE),

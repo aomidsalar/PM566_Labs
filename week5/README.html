@@ -269,8 +269,9 @@ div.tocify {
 met &lt;- data.table::fread(&quot;met_all.gz&quot;)
 
 stations &lt;- fread(&quot;ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv&quot;)</code></pre>
-<div id="processing-filtering-data" class="section level3">
-<h3>Processing / Filtering Data</h3>
+</div>
+<div id="processing-filtering-data" class="section level2">
+<h2>Processing / Filtering Data</h2>
 <pre class="r"><code>stations[, USAF := as.integer(USAF)]</code></pre>
 <pre><code>## Warning in eval(jsub, SDenv, parent.frame()): NAs introduced by coercion</code></pre>
 <pre class="r"><code># Dealing with NAs and 999999
@@ -287,7 +288,6 @@ stations &lt;- stations[!is.na(USAF)]
 # Removing duplicates
 stations[, n := 1:.N, by = .(USAF)]
 stations &lt;- stations[n == 1,][, n := NULL]</code></pre>
-</div>
 <div id="merge-the-data" class="section level3">
 <h3>Merge the data</h3>
 <pre class="r"><code>##quick way to remove duplicates
@@ -308,12 +308,15 @@ merged &lt;- merge(
 </div>
 <div id="question-1-representative-station-for-the-us" class="section level2">
 <h2>Question 1: Representative Station for the US</h2>
+<div id="what-is-the-median-station-in-terms-of-temperature-wind-speed-and-atmospheric-pressure-look-for-the-three-weather-stations-that-best-represent-continental-us-using-the-quantile-function.-do-these-three-coincide" class="section level3">
+<h3>What is the median station in terms of temperature, wind speed, and atmospheric pressure? Look for the three weather stations that best represent continental US using the quantile() function. Do these three coincide?</h3>
 <pre class="r"><code>##There are multiple measurements per station. We have to summarize the data first to characterize each station
 merged_station_avg &lt;- merged[, .(
   temp      = mean(temp, na.rm=TRUE),
   wind.sp   = mean(wind.sp, na.rm=TRUE),
   atm.press = mean(atm.press, na.rm=TRUE), lat, lon), by = c(&quot;USAFID&quot;, &quot;STATE&quot;)
 ]</code></pre>
+</div>
 <div id="now-find-the-quantiles-per-variable" class="section level3">
 <h3>Now find the quantiles per variable</h3>
 <pre class="r"><code>merged_station_avg[, temp_med := quantile(temp, probs=0.5, na.rm=TRUE)]
@@ -354,6 +357,8 @@ merged_station_avg[, atm.press_med := quantile(atm.press, probs=0.5, na.rm=TRUE)
 </div>
 <div id="question-2-representative-station-per-state" class="section level2">
 <h2>Question 2 Representative Station per State</h2>
+<div id="just-like-the-previous-question-you-are-asked-to-identify-what-is-the-most-representative-the-median-station-per-state.-this-time-instead-of-looking-at-one-variable-at-a-time-look-at-the-euclidean-distance.-if-multiple-stations-show-in-the-median-select-the-one-located-at-the-lowest-latitude." class="section level3">
+<h3>Just like the previous question, you are asked to identify what is the most representative, the median, station per state. This time, instead of looking at one variable at a time, look at the euclidean distance. If multiple stations show in the median, select the one located at the lowest latitude.</h3>
 <pre class="r"><code>## add state column by merging
 #merged_station_avg &lt;- merge(x = merged_station_avg, y = stations, by.x = &quot;USAFID&quot;, by.y = &quot;USAF&quot;, all.x = TRUE, all.y=FALSE)
 ##Compute the median per state
@@ -373,6 +378,7 @@ summary(merged_station_avg$temp)</code></pre>
 <pre class="r"><code>##These datasets have NA&#39;s. Remove them to be able to calculate Euclidean distance.
 merged_station_avg_noNA &lt;- merged_station_avg[!is.na(temp) &amp; !is.na(wind.sp) &amp; !is.na(atm.press)]
 merged_station_avg_noNA[, eudist := sqrt((temp - temp_med_state)^2 + (wind.sp - wind.sp_med_state)^2 + (atm.press - atm.press_med_state)^2)]
+##output data table with euclidean distance annotated
 merged_station_avg_noNA</code></pre>
 <pre><code>##         USAFID STATE     temp  wind.sp atm.press    lat      lon temp_med
 ##      1: 690150    CA 33.18763 3.483560  1010.379 34.300 -116.166 23.42556
@@ -410,6 +416,7 @@ merged_station_avg_noNA</code></pre>
 ## 918077:            1012.908  3.379157
 ## 918078:            1012.908  3.379157
 ## 918079:            1012.908  3.379157</code></pre>
+<p>This <code>center_3vars</code> dataset shows the station with the minimum Euclidean distance (in terms of temperature, wind speed and atmospheric pressure) per state.</p>
 <pre class="r"><code>center_3vars &lt;- merged_station_avg_noNA[ , .SD[which.min(eudist)], by = STATE]
 center_3vars</code></pre>
 <pre><code>##     STATE USAFID     temp  wind.sp atm.press    lat      lon temp_med
@@ -557,13 +564,15 @@ center_3vars</code></pre>
 ## 46:            1014.072 0.9793020
 ##     atm.press_med_state    eudist</code></pre>
 </div>
+</div>
 <div id="question-3-in-the-middle" class="section level2">
 <h2>Question 3: In the Middle?</h2>
-<p>For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question. for each state, find median lat and long..find distance using euclidean</p>
-<pre class="r"><code>##Finding median latitude and longitude
+<div id="for-each-state-identify-what-is-the-station-that-is-closest-to-the-mid-point-of-the-state.-combining-these-with-the-stations-you-identified-in-the-previous-question-use-leaflet-to-visualize-all-100-points-in-the-same-figure-applying-different-colors-for-those-identified-in-this-question." class="section level3">
+<h3>For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question.</h3>
+<pre class="r"><code>##Finding median latitude and longitude per state
 merged[, lat_median := quantile(lat, probs=.5, na.rm=TRUE), by = &quot;STATE&quot;]
 merged[, lon_median := quantile(lon, probs=.5, na.rm=TRUE), by = &quot;STATE&quot;]
-##Finding the Euclidean distances
+##Finding the Euclidean distances between latitude and longitude
 merged[, eudist_latlon := sqrt((lat - lat_median)^2 + (lon - lon_median)^2)]
 ##Outputting rows with minimum Euclidean distance per state
 center_state &lt;- merged[ , .SD[which.min(eudist_latlon)], by = STATE]
@@ -822,23 +831,27 @@ center_state</code></pre>
 <pre class="r"><code>center_state[, label := &quot;Center of the state&quot;]
 center_3vars[, label := &quot;Center of wind speed, temperature, and atmospheric pressure&quot;]
 centers &lt;- rbind(center_state, center_3vars, fill=TRUE)</code></pre>
-<p>Create map</p>
+<p>Create map. The median center of state stations are shown in pink, and the stations corresponding to the median of the three variables (wind speed, atmospheric pressure and temperature) are in orange.</p>
 <pre class="r"><code>leaflet(centers) %&gt;%
   addProviderTiles(&quot;OpenStreetMap&quot;) %&gt;%
   addCircles(lng = ~lon, lat = ~lat, color=~ifelse(label==&quot;Center of the state&quot;,&#39;pink&#39;,&#39;orange&#39;), opacity=1,fillOpacity=0.7, radius=100)</code></pre>
-<div id="htmlwidget-189be68e3f5127f774de" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-189be68e3f5127f774de">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[37.285,31.15,43.322,34.283,40.477,38.704,35.259,42.6,47.104,32.564,45.097,33.177,40.711,35.584,37.4,41.691,40.217,40.893,43.567,44.778,39,39.173,34.257,35.417,43.064,30.558,37.578,28.228,39.467,40.28,40.033,33.463,38.068,48.39,44.535,33.761,41.384,39.6,38.427,43.767,35.38,42.209,41.597,41.876,39.133,43.205,44.316,45.699,33.68,35.831,42.126,37.152,39.472,33.212,42.07,44.523,41.333,37.087,30.483,39.366,38.137,30.3,31.536,34.498,35.852,40.9,41.533,32.516,33.65,35.033,35.017,39.275,36.047,35.593,39.674,39.643,41.338,40.983,41.45,39.55,40.783,42.643,41.736,41.91,44.534,42.55,41.764,41.317,43.2,44.45,43.212,45.543,45.45,45.788],[-120.512,-97.717,-84.688,-80.567,-88.916,-93.183,-93.093,-123.364,-122.287,-82.985,-94.507,-86.783,-86.375,-79.101,-77.517,-93.566,-76.851,-97.997,-116.24,-89.667,-80.274,-76.684,-111.339,-97.383,-108.458,-92.099,-84.77,-82.156,-106.15,-83.115,-74.353,-105.535,-97.275,-100.024,-72.614,-90.758,-72.506,-116.01,-113.012,-99.318,-86.246,-75.98,-71.412,-71.021,-75.467,-71.503,-69.797,-110.448,-117.866,-90.646,-86.428,-94.495,-76.17,-87.616,-124.29,-114.215,-75.717,-84.077,-86.517,-75.078,-78.455,-97.7,-82.507,-82.71,-97.414,-117.8,-71.283,-92.041,-88.45,-106.617,-110.733,-103.666,-79.477,-88.917,-75.606,-79.916,-84.429,-85.2,-90.5,-97.65,-111.95,-77.056,-72.651,-70.729,-72.614,-92.4,-96.178,-105.683,-71.5,-68.367,-90.181,-94.051,-98.417,-111.16],100,null,null,{"interactive":true,"className":"","stroke":true,"color":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"weight":5,"opacity":1,"fill":true,"fillColor":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"fillOpacity":0.7},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[28.228,48.39],"lng":[-124.29,-68.367]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d13990ddfc2fd39ecd2f" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d13990ddfc2fd39ecd2f">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[37.285,31.15,43.322,34.283,40.477,38.704,35.259,42.6,47.104,32.564,45.097,33.177,40.711,35.584,37.4,41.691,40.217,40.893,43.567,44.778,39,39.173,34.257,35.417,43.064,30.558,37.578,28.228,39.467,40.28,40.033,33.463,38.068,48.39,44.535,33.761,41.384,39.6,38.427,43.767,35.38,42.209,41.597,41.876,39.133,43.205,44.316,45.699,33.68,35.831,42.126,37.152,39.472,33.212,42.07,44.523,41.333,37.087,30.483,39.366,38.137,30.3,31.536,34.498,35.852,40.9,41.533,32.516,33.65,35.033,35.017,39.275,36.047,35.593,39.674,39.643,41.338,40.983,41.45,39.55,40.783,42.643,41.736,41.91,44.534,42.55,41.764,41.317,43.2,44.45,43.212,45.543,45.45,45.788],[-120.512,-97.717,-84.688,-80.567,-88.916,-93.183,-93.093,-123.364,-122.287,-82.985,-94.507,-86.783,-86.375,-79.101,-77.517,-93.566,-76.851,-97.997,-116.24,-89.667,-80.274,-76.684,-111.339,-97.383,-108.458,-92.099,-84.77,-82.156,-106.15,-83.115,-74.353,-105.535,-97.275,-100.024,-72.614,-90.758,-72.506,-116.01,-113.012,-99.318,-86.246,-75.98,-71.412,-71.021,-75.467,-71.503,-69.797,-110.448,-117.866,-90.646,-86.428,-94.495,-76.17,-87.616,-124.29,-114.215,-75.717,-84.077,-86.517,-75.078,-78.455,-97.7,-82.507,-82.71,-97.414,-117.8,-71.283,-92.041,-88.45,-106.617,-110.733,-103.666,-79.477,-88.917,-75.606,-79.916,-84.429,-85.2,-90.5,-97.65,-111.95,-77.056,-72.651,-70.729,-72.614,-92.4,-96.178,-105.683,-71.5,-68.367,-90.181,-94.051,-98.417,-111.16],100,null,null,{"interactive":true,"className":"","stroke":true,"color":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"weight":5,"opacity":1,"fill":true,"fillColor":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"fillOpacity":0.7},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[28.228,48.39],"lng":[-124.29,-68.367]}},"evals":[],"jsHooks":[]}</script>
+</div>
 </div>
 <div id="question-4---mean-of-means" class="section level2">
 <h2>Question 4 - Mean of Means</h2>
-<p>state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable</p>
-<pre class="r"><code>merged[, state_temp_mean := mean(temp, na.rm=TRUE), by = &quot;STATE&quot;]
+<pre class="r"><code>##creating average temperature per state
+merged[, state_temp_mean := mean(temp, na.rm=TRUE), by = &quot;STATE&quot;]
+##annotating temperature categories
 merged[, temp_cat := fifelse(state_temp_mean &lt; 20, &quot;low&quot;,
                          fifelse(state_temp_mean &lt; 25, &quot;mid&quot;, &quot;high&quot;))]
 #table(met$temp_cat, useNA = &quot;always&quot;) ##will also show number of NA&#39;s</code></pre>
 <p>Summary table</p>
-<pre class="r"><code>tab &lt;- merged[, .(
+<pre class="r"><code>##creating table with assigned variables
+tab &lt;- merged[, .(
   N_entries      = .N,
+  N_na           = sum(is.na(temp)),
   N_stations     = length(unique(USAFID)),
   N_states       = length(unique(STATE)),
   mean_temp      = mean(temp, na.rm=TRUE),
@@ -849,10 +862,21 @@ merged[, temp_cat := fifelse(state_temp_mean &lt; 20, &quot;low&quot;,
 ##make the table look pretty
 knitr::kable(tab)</code></pre>
 <table>
+<colgroup>
+<col width="10%" />
+<col width="12%" />
+<col width="7%" />
+<col width="13%" />
+<col width="10%" />
+<col width="12%" />
+<col width="15%" />
+<col width="18%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">temp_cat</th>
 <th align="right">N_entries</th>
+<th align="right">N_na</th>
 <th align="right">N_stations</th>
 <th align="right">N_states</th>
 <th align="right">mean_temp</th>
@@ -864,6 +888,7 @@ knitr::kable(tab)</code></pre>
 <tr class="odd">
 <td align="left">mid</td>
 <td align="right">1135423</td>
+<td align="right">29252</td>
 <td align="right">781</td>
 <td align="right">25</td>
 <td align="right">22.39909</td>
@@ -873,6 +898,7 @@ knitr::kable(tab)</code></pre>
 <tr class="even">
 <td align="left">high</td>
 <td align="right">811126</td>
+<td align="right">23468</td>
 <td align="right">555</td>
 <td align="right">12</td>
 <td align="right">27.75066</td>
@@ -882,6 +908,7 @@ knitr::kable(tab)</code></pre>
 <tr class="odd">
 <td align="left">low</td>
 <td align="right">430794</td>
+<td align="right">7369</td>
 <td align="right">259</td>
 <td align="right">11</td>
 <td align="right">18.96446</td>

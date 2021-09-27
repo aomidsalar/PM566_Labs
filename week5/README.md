@@ -29,7 +29,7 @@ met <- data.table::fread("met_all.gz")
 stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 ```
 
-### Processing / Filtering Data
+## Processing / Filtering Data
 
 
 ```r
@@ -75,6 +75,7 @@ merged <- merge(
   )
 ```
 ## Question 1: Representative Station for the US
+### What is the median station in terms of temperature, wind speed, and atmospheric pressure? Look for the three weather stations that best represent continental US using the quantile() function. Do these three coincide?
 
 
 ```r
@@ -146,6 +147,7 @@ merged_station_avg[which.min(abs(atm.press - atm.press_med))]
 #median_temp_station
 ```
 ## Question 2 Representative Station per State
+### Just like the previous question, you are asked to identify what is the most representative, the median, station per state. This time, instead of looking at one variable at a time, look at the euclidean distance. If multiple stations show in the median, select the one located at the lowest latitude.
 
 ```r
 ## add state column by merging
@@ -189,6 +191,7 @@ summary(merged_station_avg$atm.press)
 ##These datasets have NA's. Remove them to be able to calculate Euclidean distance.
 merged_station_avg_noNA <- merged_station_avg[!is.na(temp) & !is.na(wind.sp) & !is.na(atm.press)]
 merged_station_avg_noNA[, eudist := sqrt((temp - temp_med_state)^2 + (wind.sp - wind.sp_med_state)^2 + (atm.press - atm.press_med_state)^2)]
+##output data table with euclidean distance annotated
 merged_station_avg_noNA
 ```
 
@@ -230,6 +233,7 @@ merged_station_avg_noNA
 ## 918078:            1012.908  3.379157
 ## 918079:            1012.908  3.379157
 ```
+This `center_3vars` dataset shows the station with the minimum Euclidean distance (in terms of temperature, wind speed and atmospheric pressure) per state.
 
 ```r
 center_3vars <- merged_station_avg_noNA[ , .SD[which.min(eudist)], by = STATE]
@@ -383,14 +387,13 @@ center_3vars
 ##     atm.press_med_state    eudist
 ```
 ## Question 3: In the Middle?
-For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question.
-for each state, find median lat and long..find distance using euclidean
+### For each state, identify what is the station that is closest to the mid-point of the state. Combining these with the stations you identified in the previous question, use leaflet() to visualize all ~100 points in the same figure, applying different colors for those identified in this question.
 
 ```r
-##Finding median latitude and longitude
+##Finding median latitude and longitude per state
 merged[, lat_median := quantile(lat, probs=.5, na.rm=TRUE), by = "STATE"]
 merged[, lon_median := quantile(lon, probs=.5, na.rm=TRUE), by = "STATE"]
-##Finding the Euclidean distances
+##Finding the Euclidean distances between latitude and longitude
 merged[, eudist_latlon := sqrt((lat - lat_median)^2 + (lon - lon_median)^2)]
 ##Outputting rows with minimum Euclidean distance per state
 center_state <- merged[ , .SD[which.min(eudist_latlon)], by = STATE]
@@ -656,7 +659,7 @@ center_state[, label := "Center of the state"]
 center_3vars[, label := "Center of wind speed, temperature, and atmospheric pressure"]
 centers <- rbind(center_state, center_3vars, fill=TRUE)
 ```
-Create map
+Create map. The median center of state stations are shown in pink, and the stations corresponding to the median of the three variables (wind speed, atmospheric pressure and temperature) are in orange.
 
 ```r
 leaflet(centers) %>%
@@ -665,15 +668,16 @@ leaflet(centers) %>%
 ```
 
 ```{=html}
-<div id="htmlwidget-189be68e3f5127f774de" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-189be68e3f5127f774de">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[37.285,31.15,43.322,34.283,40.477,38.704,35.259,42.6,47.104,32.564,45.097,33.177,40.711,35.584,37.4,41.691,40.217,40.893,43.567,44.778,39,39.173,34.257,35.417,43.064,30.558,37.578,28.228,39.467,40.28,40.033,33.463,38.068,48.39,44.535,33.761,41.384,39.6,38.427,43.767,35.38,42.209,41.597,41.876,39.133,43.205,44.316,45.699,33.68,35.831,42.126,37.152,39.472,33.212,42.07,44.523,41.333,37.087,30.483,39.366,38.137,30.3,31.536,34.498,35.852,40.9,41.533,32.516,33.65,35.033,35.017,39.275,36.047,35.593,39.674,39.643,41.338,40.983,41.45,39.55,40.783,42.643,41.736,41.91,44.534,42.55,41.764,41.317,43.2,44.45,43.212,45.543,45.45,45.788],[-120.512,-97.717,-84.688,-80.567,-88.916,-93.183,-93.093,-123.364,-122.287,-82.985,-94.507,-86.783,-86.375,-79.101,-77.517,-93.566,-76.851,-97.997,-116.24,-89.667,-80.274,-76.684,-111.339,-97.383,-108.458,-92.099,-84.77,-82.156,-106.15,-83.115,-74.353,-105.535,-97.275,-100.024,-72.614,-90.758,-72.506,-116.01,-113.012,-99.318,-86.246,-75.98,-71.412,-71.021,-75.467,-71.503,-69.797,-110.448,-117.866,-90.646,-86.428,-94.495,-76.17,-87.616,-124.29,-114.215,-75.717,-84.077,-86.517,-75.078,-78.455,-97.7,-82.507,-82.71,-97.414,-117.8,-71.283,-92.041,-88.45,-106.617,-110.733,-103.666,-79.477,-88.917,-75.606,-79.916,-84.429,-85.2,-90.5,-97.65,-111.95,-77.056,-72.651,-70.729,-72.614,-92.4,-96.178,-105.683,-71.5,-68.367,-90.181,-94.051,-98.417,-111.16],100,null,null,{"interactive":true,"className":"","stroke":true,"color":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"weight":5,"opacity":1,"fill":true,"fillColor":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"fillOpacity":0.7},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[28.228,48.39],"lng":[-124.29,-68.367]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d13990ddfc2fd39ecd2f" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d13990ddfc2fd39ecd2f">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[37.285,31.15,43.322,34.283,40.477,38.704,35.259,42.6,47.104,32.564,45.097,33.177,40.711,35.584,37.4,41.691,40.217,40.893,43.567,44.778,39,39.173,34.257,35.417,43.064,30.558,37.578,28.228,39.467,40.28,40.033,33.463,38.068,48.39,44.535,33.761,41.384,39.6,38.427,43.767,35.38,42.209,41.597,41.876,39.133,43.205,44.316,45.699,33.68,35.831,42.126,37.152,39.472,33.212,42.07,44.523,41.333,37.087,30.483,39.366,38.137,30.3,31.536,34.498,35.852,40.9,41.533,32.516,33.65,35.033,35.017,39.275,36.047,35.593,39.674,39.643,41.338,40.983,41.45,39.55,40.783,42.643,41.736,41.91,44.534,42.55,41.764,41.317,43.2,44.45,43.212,45.543,45.45,45.788],[-120.512,-97.717,-84.688,-80.567,-88.916,-93.183,-93.093,-123.364,-122.287,-82.985,-94.507,-86.783,-86.375,-79.101,-77.517,-93.566,-76.851,-97.997,-116.24,-89.667,-80.274,-76.684,-111.339,-97.383,-108.458,-92.099,-84.77,-82.156,-106.15,-83.115,-74.353,-105.535,-97.275,-100.024,-72.614,-90.758,-72.506,-116.01,-113.012,-99.318,-86.246,-75.98,-71.412,-71.021,-75.467,-71.503,-69.797,-110.448,-117.866,-90.646,-86.428,-94.495,-76.17,-87.616,-124.29,-114.215,-75.717,-84.077,-86.517,-75.078,-78.455,-97.7,-82.507,-82.71,-97.414,-117.8,-71.283,-92.041,-88.45,-106.617,-110.733,-103.666,-79.477,-88.917,-75.606,-79.916,-84.429,-85.2,-90.5,-97.65,-111.95,-77.056,-72.651,-70.729,-72.614,-92.4,-96.178,-105.683,-71.5,-68.367,-90.181,-94.051,-98.417,-111.16],100,null,null,{"interactive":true,"className":"","stroke":true,"color":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"weight":5,"opacity":1,"fill":true,"fillColor":["pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","pink","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange","orange"],"fillOpacity":0.7},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[28.228,48.39],"lng":[-124.29,-68.367]}},"evals":[],"jsHooks":[]}</script>
 ```
-
 ## Question 4 - Mean of Means
-state avg temp already done earlier. then create categorical variable according to temp (low, mid, high). then you can find the summary statistics (bullet points) per categorical variable
+
 
 ```r
+##creating average temperature per state
 merged[, state_temp_mean := mean(temp, na.rm=TRUE), by = "STATE"]
+##annotating temperature categories
 merged[, temp_cat := fifelse(state_temp_mean < 20, "low",
                          fifelse(state_temp_mean < 25, "mid", "high"))]
 #table(met$temp_cat, useNA = "always") ##will also show number of NA's
@@ -681,8 +685,10 @@ merged[, temp_cat := fifelse(state_temp_mean < 20, "low",
 Summary table
 
 ```r
+##creating table with assigned variables
 tab <- merged[, .(
   N_entries      = .N,
+  N_na           = sum(is.na(temp)),
   N_stations     = length(unique(USAFID)),
   N_states       = length(unique(STATE)),
   mean_temp      = mean(temp, na.rm=TRUE),
@@ -696,9 +702,9 @@ knitr::kable(tab)
 
 
 
-|temp_cat | N_entries| N_stations| N_states| mean_temp| mean_wind.sp| mean_atm.press|
-|:--------|---------:|----------:|--------:|---------:|------------:|--------------:|
-|mid      |   1135423|        781|       25|  22.39909|     2.352712|       1014.383|
-|high     |    811126|        555|       12|  27.75066|     2.514644|       1013.738|
-|low      |    430794|        259|       11|  18.96446|     2.637410|       1014.366|
+|temp_cat | N_entries|  N_na| N_stations| N_states| mean_temp| mean_wind.sp| mean_atm.press|
+|:--------|---------:|-----:|----------:|--------:|---------:|------------:|--------------:|
+|mid      |   1135423| 29252|        781|       25|  22.39909|     2.352712|       1014.383|
+|high     |    811126| 23468|        555|       12|  27.75066|     2.514644|       1013.738|
+|low      |    430794|  7369|        259|       11|  18.96446|     2.637410|       1014.366|
 
