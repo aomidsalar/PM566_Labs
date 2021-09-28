@@ -28,9 +28,10 @@ if (!file.exists("met_all.gz"))
     destfile = "met_all.gz",
     method   = "libcurl",
     timeout  = 60
-    )
+  )
 met <- data.table::fread("met_all.gz")
 
+#stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 ```
 
@@ -38,26 +39,19 @@ stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 
 ```{r filtering}
 stations[, USAF := as.integer(USAF)]
-# Dealing with NAs and 999999
-stations[, USAF   := fifelse(USAF == "999999", NA_integer_, USAF)]
+stations[, USAF   := fifelse(USAF == 999999, NA_integer_, USAF)]
 stations[, CTRY   := fifelse(CTRY == "", NA_character_, CTRY)]
 stations[, STATE  := fifelse(STATE == "", NA_character_, STATE)]
 
 # Selecting the three relevant columns, and keeping unique records
 stations <- unique(stations[, list(USAF, CTRY, STATE)])
-
-# Dropping NAs
 stations <- stations[!is.na(USAF)]
-
-# Removing duplicates
+##easy way to remove duplicates
 stations[, n := 1:.N, by = .(USAF)]
 stations <- stations[n == 1,][, n := NULL]
 ```
 ### Merge the data
 ```{r merging}
-##quick way to remove duplicates
-stations[, n := 1:.N, by = .(USAF)]
-stations <- stations[n == 1,][, n := NULL]
 merged <- merge(
   # Data
   x     = met,      
@@ -68,18 +62,20 @@ merged <- merge(
   # Which obs to keep?
   all.x = TRUE,      
   all.y = FALSE
-  )
+)
 ```
 ## Question 1: Representative Station for the US
 ### What is the median station in terms of temperature, wind speed, and atmospheric pressure? Look for the three weather stations that best represent continental US using the quantile() function. Do these three coincide?
 
 ```{r question1}
 ##There are multiple measurements per station. We have to summarize the data first to characterize each station
-merged_station_avg <- merged[, .(
-  temp      = mean(temp, na.rm=TRUE),
-  wind.sp   = mean(wind.sp, na.rm=TRUE),
-  atm.press = mean(atm.press, na.rm=TRUE), lat, lon), by = c("USAFID", "STATE")
-]
+merged_station_avg <- merged[,.(
+  temp = mean(temp,na.rm=TRUE),
+  wind.sp = mean(wind.sp, na.rm=TRUE),
+  atm.press = mean(atm.press, na.rm=TRUE), 
+  lon = mean(lon, na.rm = TRUE),
+  lat = mean(lat, na.rm = TRUE)
+), by= c("USAFID", "STATE")]
 ```
 ### Now find the quantiles per variable
 ```{r median}
@@ -88,12 +84,12 @@ merged_station_avg[, wind.sp_med := quantile(wind.sp, probs=0.5, na.rm=TRUE)]
 merged_station_avg[, atm.press_med := quantile(atm.press, probs=0.5, na.rm=TRUE)]
 
 
-#medians <- merged_station_avg[,.(
-#  temp_50      = quantile(temp, probs=0.5, na.rm=TRUE),
-#  wind.sp_50   = quantile(wind.sp, probs=0.5, na.rm=TRUE),
-#  atm.press_50 = quantile(atm.press, probs=0.5, na.rm=TRUE)
-#)]
-#medians
+medians <- merged_station_avg[,.(
+  temp_50      = quantile(temp, probs=0.5, na.rm=TRUE),
+  wind.sp_50   = quantile(wind.sp, probs=0.5, na.rm=TRUE),
+  atm.press_50 = quantile(atm.press, probs=0.5, na.rm=TRUE)
+)]
+medians
 ```
 ### Find the station that is closest to these median values using which.min()
 The median temperature station is at USAFID 720458.
@@ -127,9 +123,8 @@ summary(merged_station_avg$wind.sp)
 summary(merged_station_avg$atm.press)
 ##These datasets have NA's. Remove them to be able to calculate Euclidean distance.
 merged_station_avg_noNA <- merged_station_avg[!is.na(temp) & !is.na(wind.sp) & !is.na(atm.press)]
+##Calculate Euclidean Distance
 merged_station_avg_noNA[, eudist := sqrt((temp - temp_med_state)^2 + (wind.sp - wind.sp_med_state)^2 + (atm.press - atm.press_med_state)^2)]
-##output data table with euclidean distance annotated
-merged_station_avg_noNA
 ```
 This `center_3vars` dataset shows the station with the minimum Euclidean distance (in terms of temperature, wind speed and atmospheric pressure) per state.
 ```{r}
@@ -168,7 +163,7 @@ merged[, state_temp_mean := mean(temp, na.rm=TRUE), by = "STATE"]
 ##annotating temperature categories
 merged[, temp_cat := fifelse(state_temp_mean < 20, "low",
                          fifelse(state_temp_mean < 25, "mid", "high"))]
-#table(met$temp_cat, useNA = "always") ##will also show number of NA's
+table(merged$temp_cat, useNA = "always") ##will show number of NA's
 ```
 Summary table
 ```{r}
