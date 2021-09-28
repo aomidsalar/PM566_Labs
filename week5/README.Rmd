@@ -31,7 +31,6 @@ if (!file.exists("met_all.gz"))
   )
 met <- data.table::fread("met_all.gz")
 
-#stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 stations <- fread("ftp://ftp.ncdc.noaa.gov/pub/data/noaa/isd-history.csv")
 ```
 
