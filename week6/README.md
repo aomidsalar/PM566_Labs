@@ -66,8 +66,7 @@ mtsamples %>% count(medical_specialty)
 
 ```r
 ggplot(data = mtsamples) +
-  geom_bar(mapping= aes(x = medical_specialty), color = 'black',fill = 'darkgreen') +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  geom_bar(mapping= aes(y = medical_specialty), color = 'darkgreen',fill = 'green3')
 ```
 
 ![](README_files/figure-html/question1-1.png)<!-- -->
@@ -78,21 +77,26 @@ Not surprisingly, the majority of the top 20 most frequent words are stop words.
 
 ```r
 mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) %>% top_n(20, n) %>% ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
-  geom_col() +
+  geom_col(color = 'darkgreen', fill = 'green3') +
   labs(title = "Top 20 words", y = "", x = "frequency")
 ```
 
 ![](README_files/figure-html/question2-1.png)<!-- -->
+
 ## Question 3
+
 ### Redo visualization but remove stopwords as well as numbers.
+
 
 ```r
 mtsamples %>%
   unnest_tokens(token, transcription) %>%
+  count(token, sort = TRUE) %>% 
   anti_join(stop_words, by = c("token" = "word")) %>% 
-  count(token, sort = TRUE) %>% top_n(20, n) %>% 
+  top_n(20, n) %>% 
   ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
-  geom_col()
+    geom_col(color = 'darkgreen', fill = 'green3') +
+    labs(title = "Top 20 Words, without Stopwords", y = "", x = "frequency")
 ```
 
 ![](README_files/figure-html/question3-1.png)<!-- -->

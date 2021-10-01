@@ -38,8 +38,7 @@ There are 40 specialties in total within this dataset. The specialties do not se
 ```{r question1}
 mtsamples %>% count(medical_specialty)
 ggplot(data = mtsamples) +
-  geom_bar(mapping= aes(x = medical_specialty), color = 'black',fill = 'darkgreen') +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  geom_bar(mapping= aes(y = medical_specialty), color = 'darkgreen',fill = 'green3')
 
 ```
 ```{r include = FALSE}
@@ -51,17 +50,22 @@ specialties <- mtsamples %>% count(medical_specialty)
 Not surprisingly, the majority of the top 20 most frequent words are stop words. The one that stands out is the word *patient*.
 ```{r question2, cache = TRUE}
 mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) %>% top_n(20, n) %>% ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
-  geom_col() +
+  geom_col(color = 'darkgreen', fill = 'green3') +
   labs(title = "Top 20 words", y = "", x = "frequency")
 ```
+
 ## Question 3
+
 ### Redo visualization but remove stopwords as well as numbers.
+
 ```{r question3}
 mtsamples %>%
   unnest_tokens(token, transcription) %>%
+  count(token, sort = TRUE) %>% 
   anti_join(stop_words, by = c("token" = "word")) %>% 
-  count(token, sort = TRUE) %>% top_n(20, n) %>% 
+  top_n(20, n) %>% 
   ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
-  geom_col()
+    geom_col(color = 'darkgreen', fill = 'green3') +
+    labs(title = "Top 20 Words, without Stopwords", y = "", x = "frequency")
 ```
 
