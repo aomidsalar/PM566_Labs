@@ -344,13 +344,3458 @@ head(mtsamples)</code></pre>
 <div id="using-the-results-you-got-from-questions-4.-pick-a-word-and-count-the-words-that-appears-after-and-before-it." class="section level3">
 <h3>Using the results you got from questions 4. Pick a word and count the words that appears after and before it.</h3>
 <p>Picking word <em>patient</em></p>
-<pre class="r"><code>#mtsamples %&gt;% unnest_ngrams(ngram, transcription, n = 3) %&gt;% 
-#  separate(ngram, into = c(&quot;word1&quot;, &quot;word2&quot;, &quot;word3&quot;))
-#  count(ngram, sort = TRUE) %&gt;%
-#  top_n(20, n) %&gt;%
-#  ggplot(aes(x = n, y = fct_reorder(ngram, n))) +
-#  geom_col(color = &#39;darkgreen&#39;, fill = &#39;green3&#39;) +
-#  labs(title = &quot;Top 20 Tri-grams&quot;, y = &quot;&quot;, x = &quot;frequency&quot;)</code></pre>
+<pre class="r"><code>patient &lt;- mtsamples %&gt;% unnest_ngrams(ngram, transcription, n = 3) %&gt;% 
+  separate(ngram, into = c(&quot;word1&quot;, &quot;word2&quot;, &quot;word3&quot;), sep = &quot; &quot;) %&gt;%
+  select(word1, word2, word3) %&gt;%
+  filter(word2 == &quot;patient&quot;)
+##Frequency of words that appear before the word &#39;patient&#39;
+patient %&gt;% count(word1, sort = TRUE) %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">word1</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">the</td>
+<td align="right">20294</td>
+</tr>
+<tr class="even">
+<td align="left">this</td>
+<td align="right">463</td>
+</tr>
+<tr class="odd">
+<td align="left">history</td>
+<td align="right">101</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="right">67</td>
+</tr>
+<tr class="odd">
+<td align="left">and</td>
+<td align="right">47</td>
+</tr>
+<tr class="even">
+<td align="left">procedure</td>
+<td align="right">32</td>
+</tr>
+<tr class="odd">
+<td align="left">female</td>
+<td align="right">26</td>
+</tr>
+<tr class="even">
+<td align="left">with</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">use</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">old</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">sample</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td align="left">male</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">new</td>
+<td align="right">19</td>
+</tr>
+<tr class="even">
+<td align="left">general</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">illness</td>
+<td align="right">16</td>
+</tr>
+<tr class="even">
+<td align="left">plan</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">indications</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">to</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td align="left">allergies</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">your</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">correct</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">detail</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">of</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">course</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">normal</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">exam</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">for</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">lbs</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">in</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">instructions</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">minutes</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">recommend</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">systems</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">day</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">digits</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">s</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">subjective</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">that</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">doctor</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">established</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">eyes</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">hyperthyroidism</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">injury</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">my</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">none</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">obtained</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">pain</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">route</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">social</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">technique</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">activity</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">therapy</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">weeks</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">appropriate</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">bilaterally</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">breast</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">cardiovascular</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">constitutional</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">dermatologic</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">each</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">ed</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">findings</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">further</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">gastrointestinal</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">genitourinary</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">goals</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">ill</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">infection</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">infusion</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">integumentary</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">medications</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">neurological</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">observation</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">per</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">pleasant</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">preprocedure</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">psychiatric</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">respiratory</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">room</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">seizures</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">source</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">strips</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">treatment</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">uncertainty</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">yes</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">young</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">after</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">as</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">but</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">cardio</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">children</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">cuff</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">depression</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">dermatology</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">diabetes</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">discharge</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">discouraged</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">encouraged</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">endocrine</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">gi</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">gu</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">health</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">heent</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">impotence</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">laceration</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">monitor</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">oriented</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">p.r.n</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">pm</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">pregnancy</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">presentation</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">resp</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">site</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">symptoms</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">take</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">team</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">today</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">total</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">units</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">weight</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">when</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">which</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">05</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">58</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">8</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">98</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">98.6</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">above</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">activities</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">adenoma</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">admission</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">again</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">agent</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">ago</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">alcohol</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">appearance</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">areas</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">arthralgias</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">asplenic</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">atelectasis</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">back</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">bilateral</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">breath</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">brings</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">case</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">clearance</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">collapse</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">complaint</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">complaints</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">condition</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">contents</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">context</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">contraception</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">coughing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">data</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">decompression</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">delightful</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">difficulty</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">disease</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">dl</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">domain</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">down</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">eclampsia</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">effusion</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">employed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">enlarging</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">examination</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">exercise</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">extensive</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">extremities</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">factors</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">fat</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">fibrillation</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">fist</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">from</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">gestation</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">gout</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">habits</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">hand</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">healthy</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">heavy</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">hemiparesis</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">hemostasis</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">herniation</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">hpi</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">hypertension</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">indication</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">laboratory</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">loss</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">maintenance</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">mammography</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">manner</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">married</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">minute</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">months</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">needs</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">nice</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">no</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">note</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">noted</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">on</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">patient</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">pneumonia</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">position</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">preoperatively</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">primary</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">proper</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">protocol</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">rash</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">rectum</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">recurrence</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">regularly</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">removed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">rest</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">sampling</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">scarred</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">sedentary</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">see</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">severe</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">size</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">skills</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">stating</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">stitch</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">suctioned</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">surgery</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">syncope</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">syndrome</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">taken</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">then</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">time</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">tolerable</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">train</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">tube</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">unremarkable</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">vagina</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">visit</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">vomiting</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">weakness</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">week</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">weekend</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">where</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">withdrawn</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">workstation</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">yyyy</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">01</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">aid</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">arrival</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">breasts</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">cough</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">daytime</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">directly</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">dysfunction</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">guidance</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">improved</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">intercourse</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">light</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">movement</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">parents</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">performance</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">put</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">reports</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">restrictions</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">term</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">vol</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>##Frequency of words that appear after the word &#39;patient&#39;
+patient %&gt;% count(word3, sort = TRUE) %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">word3</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">was</td>
+<td align="right">6291</td>
+</tr>
+<tr class="even">
+<td align="left">is</td>
+<td align="right">3332</td>
+</tr>
+<tr class="odd">
+<td align="left">has</td>
+<td align="right">1417</td>
+</tr>
+<tr class="even">
+<td align="left">tolerated</td>
+<td align="right">994</td>
+</tr>
+<tr class="odd">
+<td align="left">had</td>
+<td align="right">886</td>
+</tr>
+<tr class="even">
+<td align="left">will</td>
+<td align="right">616</td>
+</tr>
+<tr class="odd">
+<td align="left">denies</td>
+<td align="right">552</td>
+</tr>
+<tr class="even">
+<td align="left">and</td>
+<td align="right">377</td>
+</tr>
+<tr class="odd">
+<td align="left">states</td>
+<td align="right">363</td>
+</tr>
+<tr class="even">
+<td align="left">does</td>
+<td align="right">334</td>
+</tr>
+<tr class="odd">
+<td align="left">also</td>
+<td align="right">301</td>
+</tr>
+<tr class="even">
+<td align="left">in</td>
+<td align="right">246</td>
+</tr>
+<tr class="odd">
+<td align="left">did</td>
+<td align="right">232</td>
+</tr>
+<tr class="even">
+<td align="left">to</td>
+<td align="right">215</td>
+</tr>
+<tr class="odd">
+<td align="left">the</td>
+<td align="right">200</td>
+</tr>
+<tr class="even">
+<td align="left">underwent</td>
+<td align="right">180</td>
+</tr>
+<tr class="odd">
+<td align="left">received</td>
+<td align="right">160</td>
+</tr>
+<tr class="even">
+<td align="left">reports</td>
+<td align="right">155</td>
+</tr>
+<tr class="odd">
+<td align="left">with</td>
+<td align="right">141</td>
+</tr>
+<tr class="even">
+<td align="left">understood</td>
+<td align="right">113</td>
+</tr>
+<tr class="odd">
+<td align="left">presents</td>
+<td align="right">91</td>
+</tr>
+<tr class="even">
+<td align="left">should</td>
+<td align="right">83</td>
+</tr>
+<tr class="odd">
+<td align="left">lives</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="left">who</td>
+<td align="right">79</td>
+</tr>
+<tr class="odd">
+<td align="left">on</td>
+<td align="right">77</td>
+</tr>
+<tr class="even">
+<td align="left">presented</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="left">admits</td>
+<td align="right">69</td>
+</tr>
+<tr class="even">
+<td align="left">appears</td>
+<td align="right">68</td>
+</tr>
+<tr class="odd">
+<td align="left">for</td>
+<td align="right">67</td>
+</tr>
+<tr class="even">
+<td align="left">including</td>
+<td align="right">67</td>
+</tr>
+<tr class="odd">
+<td align="left">would</td>
+<td align="right">65</td>
+</tr>
+<tr class="even">
+<td align="left">denied</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="left">then</td>
+<td align="right">61</td>
+</tr>
+<tr class="even">
+<td align="left">reported</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="left">at</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="left">remained</td>
+<td align="right">56</td>
+</tr>
+<tr class="odd">
+<td align="left">as</td>
+<td align="right">52</td>
+</tr>
+<tr class="even">
+<td align="left">went</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="left">understands</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="left">subsequently</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="left">of</td>
+<td align="right">47</td>
+</tr>
+<tr class="even">
+<td align="left">stated</td>
+<td align="right">46</td>
+</tr>
+<tr class="odd">
+<td align="left">she</td>
+<td align="right">44</td>
+</tr>
+<tr class="even">
+<td align="left">may</td>
+<td align="right">40</td>
+</tr>
+<tr class="odd">
+<td align="left">continued</td>
+<td align="right">38</td>
+</tr>
+<tr class="even">
+<td align="left">returned</td>
+<td align="right">38</td>
+</tr>
+<tr class="odd">
+<td align="left">agreed</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="left">he</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="left">a</td>
+<td align="right">35</td>
+</tr>
+<tr class="even">
+<td align="left">continues</td>
+<td align="right">35</td>
+</tr>
+<tr class="odd">
+<td align="left">after</td>
+<td align="right">34</td>
+</tr>
+<tr class="even">
+<td align="left">came</td>
+<td align="right">34</td>
+</tr>
+<tr class="odd">
+<td align="left">comes</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td align="left">under</td>
+<td align="right">32</td>
+</tr>
+<tr class="odd">
+<td align="left">appeared</td>
+<td align="right">31</td>
+</tr>
+<tr class="even">
+<td align="left">i</td>
+<td align="right">31</td>
+</tr>
+<tr class="odd">
+<td align="left">back</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">currently</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">desires</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">left</td>
+<td align="right">29</td>
+</tr>
+<tr class="odd">
+<td align="left">began</td>
+<td align="right">28</td>
+</tr>
+<tr class="even">
+<td align="left">experienced</td>
+<td align="right">28</td>
+</tr>
+<tr class="odd">
+<td align="left">felt</td>
+<td align="right">28</td>
+</tr>
+<tr class="even">
+<td align="left">identification</td>
+<td align="right">28</td>
+</tr>
+<tr class="odd">
+<td align="left">that</td>
+<td align="right">28</td>
+</tr>
+<tr class="even">
+<td align="left">could</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">developed</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="left">started</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">today</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="left">complains</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">describes</td>
+<td align="right">25</td>
+</tr>
+<tr class="even">
+<td align="left">this</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">being</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">informed</td>
+<td align="right">24</td>
+</tr>
+<tr class="odd">
+<td align="left">takes</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">discharged</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">notes</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td align="left">said</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">but</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">can</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">complained</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">initially</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">needs</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">noted</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">from</td>
+<td align="right">21</td>
+</tr>
+<tr class="even">
+<td align="left">became</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">says</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">about</td>
+<td align="right">19</td>
+</tr>
+<tr class="odd">
+<td align="left">apparently</td>
+<td align="right">19</td>
+</tr>
+<tr class="even">
+<td align="left">brought</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">cannot</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">gave</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">regarding</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">relates</td>
+<td align="right">18</td>
+</tr>
+<tr class="odd">
+<td align="left">still</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">recently</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">smokes</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">however</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">returns</td>
+<td align="right">16</td>
+</tr>
+<tr class="even">
+<td align="left">seems</td>
+<td align="right">16</td>
+</tr>
+<tr class="odd">
+<td align="left">it</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">shows</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td align="left">ambulates</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">be</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">by</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">decided</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">exercised</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">herself</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">needed</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">procedure</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">all</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="left">moves</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">risks</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="left">up</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">elected</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">having</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="left">instructions</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">wished</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="left">woke</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">arrived</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">completed</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">gives</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">history</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">include</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">physical</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">return</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">suffered</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">already</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">becomes</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">demonstrates</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">feels</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">follow</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">himself</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">home</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">improved</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">lying</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">now</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">recovered</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">refuses</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">requested</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">we</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">an</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">because</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">care</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">her</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">includes</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">later</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">prepped</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">provided</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">taken</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">took</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">undergo</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">walks</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="left">weighs</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">abc</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">again</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">along</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">brings</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">clinically</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">consent</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">discussing</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">indicates</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">made</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">met</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">passed</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">position</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">previously</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">quit</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">rates</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">requests</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">scored</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">transferred</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">wanted</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">according</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">actually</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">died</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">family</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">included</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">into</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">might</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">once</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">operative</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">placed</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">positioning</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">referred</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">right</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">speaks</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">spent</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">upon</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">used</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">when</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">which</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">works</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">admitted</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">daughter</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">dear</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">declined</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">described</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">exhibits</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">his</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">movement</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">not</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">opted</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">or</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">oriented</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">plans</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">questionnaire</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">refused</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">relationship</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">remains</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">resides</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">severe</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">signed</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">spends</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">supine</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">there</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">unable</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">although</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">are</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">asked</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">been</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">continue</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">eats</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">ended</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">expressed</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">first</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">have</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">indicated</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">just</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">last</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">maintained</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">never</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">performs</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">plan</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">prior</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">since</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">sustained</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">talking</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">tends</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">tolerating</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">verbalized</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">vomited</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">wants</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">were</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">accepted</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">advises</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">assessment</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">attended</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">believes</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">clearly</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">closely</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">consented</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">deteriorated</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">dr</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">drinks</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">during</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">either</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">extremity</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">fell</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">followed</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">goal</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">got</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">identified</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">immediately</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">increase</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">instructed</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">looks</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">makes</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">no</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">nothing</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">obtained</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">only</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">otherwise</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">over</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">overnight</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">participated</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">positioned</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">probably</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">progressed</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">pushed</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">put</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">regained</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">required</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">reviewing</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">ruled</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">seemed</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">sees</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">stopped</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">tells</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">therefore</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">told</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">unfortunately</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">voiced</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">well</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">wishes</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">without</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">2.5</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">achieved</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">attempted</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">based</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">calcium</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">called</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">claimed</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">compression</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">consisting</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">consulted</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">cries</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">deficits</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">delivered</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">deny</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">desired</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">dynamics</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">elects</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">enjoys</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">estimates</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">eventually</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">explained</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">followup</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">forgot</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">given</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">here</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">impression</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">information</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">laid</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">maintains</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">meds</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">need</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">originally</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">other</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">out</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">post</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">postoperatively</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">presenting</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">proceeded</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">profile</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">progressively</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">ran</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">ranks</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">receive</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">reduce</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">sat</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">say</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">scheduled</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">seated</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">significant</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">sitting</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">smoked</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">spoke</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">state</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">status</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">subjectively</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">taking</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">tests</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">though</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">tried</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">turns</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">tylenol</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">use</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">weight</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">while</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">within</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">work</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">worked</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">37</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">600</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">72</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">acutely</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">additionally</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">af</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">afterward</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">aggressive</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">agrees</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">alert</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">allergies</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">alternatives</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">ambulated</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">ample</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">answered</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">attempts</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">attends</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">awake</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">awoke</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">axial</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">bathes</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">begin</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">beginning</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">best</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">between</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">biological</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">bradycardic</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">breast</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">breathing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">call</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">catheterizing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">certainly</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">chart</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">claims</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">condition</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">confirmed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">consumed</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">continually</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">converted</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">correctly</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">cpt</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">declines</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">deemed</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">despite</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">diagnoses</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">discomfort</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">discontinue</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">dorsal</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">draped</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">eat</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">emphatically</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">endorsed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">endorses</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">enters</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">enthusiastically</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">especially</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">evaluation</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">even</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">ever</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">exhibited</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">experimented</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">expresses</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">extubated</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">eye</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">failed</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">finished</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">follows</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">found</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">get</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">giving</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">goals</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">goes</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">going</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">heal</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">healed</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">hemodynamically</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">horizontal</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">hospital</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">hospitalized</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">identifies</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">if</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">incapable</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">incidentally</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">ingested</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">interestingly</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">intraoperatively</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">intubated</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">iv</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">jerked</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">knee</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">knew</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">knows</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">laboratory</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">likely</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">lost</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">mainly</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">maximized</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">medically</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">medication</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">mini</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">missing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">most</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">motivation</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">moved</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">mrs</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">nature</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">neglected</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">noncompliant</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">noticed</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">npo</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">nursing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">off</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">opting</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">paced</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">past</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">patient</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">per</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">performed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">physician</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">planned</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">please</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">possesses</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">postprocedure</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">preoperative</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">preoperatively</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">pressure</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">properly</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">psychologic</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">pursuing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">rapidly</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">re</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">reached</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">recalls</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">receives</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">recheck</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">recollection</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">refusing</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">related</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">replies</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">reportedly</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">responded</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">restricted</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">retained</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">retains</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">retired</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">revealed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">reviewed</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">saw</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">secondary</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">see</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">seeks</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">seen</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">semi</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">sent</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">set</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">showed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">sign</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">simply</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">sincerely</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">slipped</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">snores</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">so</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">sought</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">stabilize</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">stands</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">stating</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">stood</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">stop</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">stopping</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">stressing</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">suffers</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">supportive</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">supposedly</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">terminated</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">through</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">together</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">tpa</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">try</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">tympanic</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">ultimately</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">undergoes</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">unlike</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">upper</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">urinates</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">using</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">usually</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">utilized</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">verbalizes</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">very</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">via</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">visit</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">vitamin</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">voices</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">weighed</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">where</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">whether</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">whom</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">wife’s</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">wore</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">wound</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">xxx</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">abcd</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">ate</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">cut</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">excluding</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">expired</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">landed</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">leaving</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">lived</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">managed</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">medical</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">primarily</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">recalled</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">routinely</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">safety</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">slept</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">special</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">stayed</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">they</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">transforaminally</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">walked</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 

@@ -96,13 +96,14 @@ mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>%
 ## Question 5
 ### Using the results you got from questions 4. Pick a word and count the words that appears after and before it.
 Picking word *patient*
-```{r}
-#mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>% 
-#  separate(ngram, into = c("word1", "word2", "word3"))
-#  count(ngram, sort = TRUE) %>%
-#  top_n(20, n) %>%
-#  ggplot(aes(x = n, y = fct_reorder(ngram, n))) +
-#  geom_col(color = 'darkgreen', fill = 'green3') +
-#  labs(title = "Top 20 Tri-grams", y = "", x = "frequency")
+```{r, cache = TRUE}
+patient <- mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>% 
+  separate(ngram, into = c("word1", "word2", "word3"), sep = " ") %>%
+  select(word1, word2, word3) %>%
+  filter(word2 == "patient")
+##Frequency of words that appear before the word 'patient'
+patient %>% count(word1, sort = TRUE) %>% knitr::kable()
+##Frequency of words that appear after the word 'patient'
+patient %>% count(word3, sort = TRUE) %>% knitr::kable()
 ```
 
