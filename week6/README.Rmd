@@ -19,6 +19,7 @@ library('ggplot2')
 library('dplyr')
 library('tibble')
 library('forcats')
+library('tidyr')
 ```
 
 ### Read in Data
@@ -29,7 +30,7 @@ if (!file.exists(fn))
 mtsamples <- read.csv(fn)
 ##convert data frame into tibble
 mtsamples <- as_tibble(mtsamples)
-head(mtsamples) %>% knitr::kable()
+head(mtsamples)
 ##piping it to knitr::kable() makes the table look pretty
 ```
 ## Question 1
@@ -63,9 +64,45 @@ mtsamples %>%
   unnest_tokens(token, transcription) %>%
   count(token, sort = TRUE) %>% 
   anti_join(stop_words, by = c("token" = "word")) %>% 
+  filter(!grepl("^[0-9]+$", x = token)) %>%
   top_n(20, n) %>% 
   ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
     geom_col(color = 'darkgreen', fill = 'green3') +
-    labs(title = "Top 20 Words, without Stopwords", y = "", x = "frequency")
+    labs(title = "Top 20 Words, without Stopwords and Numbers", y = "", x = "frequency")
+```
+
+## Question 4
+### Repeat question 2, but this time tokenize into bi-grams. A lot of these contain stop-words, so this is not very informative.
+```{r question4, cache = TRUE}
+mtsamples %>% unnest_ngrams(ngram, transcription, n = 2) %>% 
+  count(ngram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(ngram, n))) +
+  geom_col(color = 'darkgreen', fill = 'green3') +
+  labs(title = "Top 20 Bi-grams", y = "", x = "frequency")
+```
+### How does the result change if you look at tri-grams?
+The top bi-gram *the patient* appears in the top two tri-grams. Some of the other top bi-grams (of the, in the, to the) don't show up as frequently because they are likely being used with a variety of words before/after them. These tri-grams are more unique than the list of bi-grams in containing words that are medical-related.
+The frequencies between these two graphs is also very different. The top bi-gram has a frequency of over 20,000 while the top tri-gram has a frequency of approximately 6000.
+```{r tri-gram, cache = TRUE}
+mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>% 
+  count(ngram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(ngram, n))) +
+  geom_col(color = 'darkgreen', fill = 'green3') +
+  labs(title = "Top 20 Tri-grams", y = "", x = "frequency")
+```
+
+## Question 5
+### Using the results you got from questions 4. Pick a word and count the words that appears after and before it.
+Picking word *patient*
+```{r}
+#mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>% 
+#  separate(ngram, into = c("word1", "word2", "word3"))
+#  count(ngram, sort = TRUE) %>%
+#  top_n(20, n) %>%
+#  ggplot(aes(x = n, y = fct_reorder(ngram, n))) +
+#  geom_col(color = 'darkgreen', fill = 'green3') +
+#  labs(title = "Top 20 Tri-grams", y = "", x = "frequency")
 ```
 
