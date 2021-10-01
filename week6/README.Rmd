@@ -1,0 +1,54 @@
+---
+title: "Lab 6"
+author: "Audrey Omidsalar"
+date: "10/1/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    keep_md: yes
+  github_document:
+  always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library('data.table')
+library('tidytext')
+library('ggplot2')
+library('dplyr')
+library('tibble')
+```
+
+### Read in Data
+```{r download data, cache = TRUE}
+fn <- "mtsamples.csv"
+if (!file.exists(fn))
+  download.file("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/00_mtsamples/mtsamples.csv", destfile = fn)
+mtsamples <- read.csv(fn)
+##convert data frame into tibble
+mtsamples <- as_tibble(mtsamples)
+head(mtsamples) %>% knitr::kable()
+##piping it to knitr::kable() makes the table look pretty
+```
+## Question 1
+### What specialties do we have?
+There are 40 specialties in total within this dataset. The specialties do not seem to be evenly distributed: surgery, cardiovascular, consult, and orthopedic have the most amount of entries.
+```{r}
+mtsamples %>% count(medical_specialty)
+ggplot(data = mtsamples) +
+  geom_bar(mapping= aes(x = medical_specialty), color = 'black',fill = 'darkgreen') +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+```
+```{r include = FALSE}
+specialties <- mtsamples %>% count(medical_specialty)
+#There are `r nrow(specialties)` specialties. Now let's take a look at the distribution
+```
+## Question 2
+### Tokenize the words in the `transcription` column. Count the number of times each token appears. Visualize the top 20 most frequent words.
+Not surprisingly, the majority of the top 20 most frequent words are stop words. One that stands out is the word *patient*.
+```{r}
+mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) %>% top_n(20, n) %>% knitr::kable()
+```
+
