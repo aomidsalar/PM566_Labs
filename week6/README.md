@@ -70,38 +70,30 @@ ggplot(data = mtsamples) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-![](README_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+![](README_files/figure-html/question1-1.png)<!-- -->
 
 ## Question 2
 ### Tokenize the words in the `transcription` column. Count the number of times each token appears. Visualize the top 20 most frequent words.
-Not surprisingly, the majority of the top 20 most frequent words are stop words. One that stands out is the word *patient*.
+Not surprisingly, the majority of the top 20 most frequent words are stop words. The one that stands out is the word *patient*.
 
 ```r
-mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) %>% top_n(20, n) %>% knitr::kable()
+mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) %>% top_n(20, n) %>% ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
+  geom_col() +
+  labs(title = "Top 20 words", y = "", x = "frequency")
 ```
 
+![](README_files/figure-html/question2-1.png)<!-- -->
+## Question 3
+### Redo visualization but remove stopwords as well as numbers.
 
+```r
+mtsamples %>%
+  unnest_tokens(token, transcription) %>%
+  anti_join(stop_words, by = c("token" = "word")) %>% 
+  count(token, sort = TRUE) %>% top_n(20, n) %>% 
+  ggplot(aes(x = n, y = fct_reorder(token, n ))) + 
+  geom_col()
+```
 
-|token   |      n|
-|:-------|------:|
-|the     | 149888|
-|and     |  82779|
-|was     |  71765|
-|of      |  59205|
-|to      |  50632|
-|a       |  42810|
-|with    |  35815|
-|in      |  32807|
-|is      |  26378|
-|patient |  22065|
-|no      |  17874|
-|she     |  17593|
-|for     |  17049|
-|he      |  15542|
-|were    |  15535|
-|on      |  14694|
-|this    |  13949|
-|at      |  13492|
-|then    |  12430|
-|right   |  11587|
+![](README_files/figure-html/question3-1.png)<!-- -->
 

@@ -4,3 +4,4 @@ tidytext
 ggplot2
 dplyr
 tibble
+forcats
