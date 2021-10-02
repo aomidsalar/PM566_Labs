@@ -136,882 +136,309 @@ mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>%
 Picking word *patient*
 
 ```r
-patient <- mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>% 
-  separate(ngram, into = c("word1", "word2", "word3"), sep = " ") %>%
-  select(word1, word2, word3) %>%
-  filter(word2 == "patient")
-##Frequency of words that appear before the word 'patient'
-patient %>% count(word1, sort = TRUE) %>% knitr::kable()
+patient <- mtsamples %>% unnest_ngrams(ngram, transcription, n = 2) %>% 
+  separate(ngram, into = c("word1", "word2"), sep = " ") %>%
+  select(word1, word2) %>%
+  filter(word1 == "patient" | word2 == "patient")
 ```
 
-
-
-|word1            |     n|
-|:----------------|-----:|
-|the              | 20294|
-|this             |   463|
-|history          |   101|
-|a                |    67|
-|and              |    47|
-|procedure        |    32|
-|female           |    26|
-|with             |    25|
-|use              |    24|
-|old              |    23|
-|sample           |    23|
-|male             |    22|
-|new              |    19|
-|general          |    16|
-|illness          |    16|
-|plan             |    16|
-|indications      |    15|
-|to               |    15|
-|allergies        |    14|
-|your             |    13|
-|correct          |    11|
-|detail           |    11|
-|of               |    11|
-|course           |    10|
-|normal           |    10|
-|exam             |     9|
-|for              |     9|
-|lbs              |     9|
-|in               |     8|
-|instructions     |     8|
-|minutes          |     8|
-|recommend        |     8|
-|systems          |     8|
-|day              |     7|
-|digits           |     7|
-|s                |     7|
-|subjective       |     7|
-|that             |     7|
-|1                |     6|
-|2                |     6|
-|doctor           |     6|
-|established      |     6|
-|eyes             |     6|
-|hyperthyroidism  |     6|
-|injury           |     6|
-|my               |     6|
-|none             |     6|
-|obtained         |     6|
-|pain             |     6|
-|route            |     6|
-|social           |     6|
-|technique        |     6|
-|activity         |     5|
-|therapy          |     5|
-|weeks            |     5|
-|4                |     4|
-|appropriate      |     4|
-|bilaterally      |     4|
-|breast           |     4|
-|cardiovascular   |     4|
-|constitutional   |     4|
-|dermatologic     |     4|
-|each             |     4|
-|ed               |     4|
-|findings         |     4|
-|further          |     4|
-|gastrointestinal |     4|
-|genitourinary    |     4|
-|goals            |     4|
-|ill              |     4|
-|infection        |     4|
-|infusion         |     4|
-|integumentary    |     4|
-|medications      |     4|
-|neurological     |     4|
-|observation      |     4|
-|per              |     4|
-|pleasant         |     4|
-|preprocedure     |     4|
-|psychiatric      |     4|
-|respiratory      |     4|
-|room             |     4|
-|seizures         |     4|
-|source           |     4|
-|strips           |     4|
-|treatment        |     4|
-|uncertainty      |     4|
-|yes              |     4|
-|young            |     4|
-|after            |     3|
-|as               |     3|
-|but              |     3|
-|cardio           |     3|
-|children         |     3|
-|cuff             |     3|
-|depression       |     3|
-|dermatology      |     3|
-|diabetes         |     3|
-|discharge        |     3|
-|discouraged      |     3|
-|encouraged       |     3|
-|endocrine        |     3|
-|gi               |     3|
-|gu               |     3|
-|health           |     3|
-|heent            |     3|
-|impotence        |     3|
-|laceration       |     3|
-|monitor          |     3|
-|oriented         |     3|
-|p.r.n            |     3|
-|pm               |     3|
-|pregnancy        |     3|
-|presentation     |     3|
-|resp             |     3|
-|site             |     3|
-|symptoms         |     3|
-|take             |     3|
-|team             |     3|
-|today            |     3|
-|total            |     3|
-|units            |     3|
-|weight           |     3|
-|when             |     3|
-|which            |     3|
-|05               |     2|
-|3                |     2|
-|58               |     2|
-|8                |     2|
-|98               |     2|
-|98.6             |     2|
-|above            |     2|
-|activities       |     2|
-|adenoma          |     2|
-|admission        |     2|
-|again            |     2|
-|agent            |     2|
-|ago              |     2|
-|alcohol          |     2|
-|appearance       |     2|
-|areas            |     2|
-|arthralgias      |     2|
-|asplenic         |     2|
-|atelectasis      |     2|
-|back             |     2|
-|bilateral        |     2|
-|breath           |     2|
-|brings           |     2|
-|case             |     2|
-|clearance        |     2|
-|collapse         |     2|
-|complaint        |     2|
-|complaints       |     2|
-|condition        |     2|
-|contents         |     2|
-|context          |     2|
-|contraception    |     2|
-|coughing         |     2|
-|data             |     2|
-|decompression    |     2|
-|delightful       |     2|
-|difficulty       |     2|
-|disease          |     2|
-|dl               |     2|
-|domain           |     2|
-|down             |     2|
-|eclampsia        |     2|
-|effusion         |     2|
-|employed         |     2|
-|enlarging        |     2|
-|examination      |     2|
-|exercise         |     2|
-|extensive        |     2|
-|extremities      |     2|
-|factors          |     2|
-|fat              |     2|
-|fibrillation     |     2|
-|fist             |     2|
-|from             |     2|
-|gestation        |     2|
-|gout             |     2|
-|habits           |     2|
-|hand             |     2|
-|healthy          |     2|
-|heavy            |     2|
-|hemiparesis      |     2|
-|hemostasis       |     2|
-|herniation       |     2|
-|hpi              |     2|
-|hypertension     |     2|
-|indication       |     2|
-|laboratory       |     2|
-|loss             |     2|
-|maintenance      |     2|
-|mammography      |     2|
-|manner           |     2|
-|married          |     2|
-|minute           |     2|
-|months           |     2|
-|needs            |     2|
-|nice             |     2|
-|no               |     2|
-|note             |     2|
-|noted            |     2|
-|on               |     2|
-|patient          |     2|
-|pneumonia        |     2|
-|position         |     2|
-|preoperatively   |     2|
-|primary          |     2|
-|proper           |     2|
-|protocol         |     2|
-|rash             |     2|
-|rectum           |     2|
-|recurrence       |     2|
-|regularly        |     2|
-|removed          |     2|
-|rest             |     2|
-|sampling         |     2|
-|scarred          |     2|
-|sedentary        |     2|
-|see              |     2|
-|severe           |     2|
-|size             |     2|
-|skills           |     2|
-|stating          |     2|
-|stitch           |     2|
-|suctioned        |     2|
-|surgery          |     2|
-|syncope          |     2|
-|syndrome         |     2|
-|taken            |     2|
-|then             |     2|
-|time             |     2|
-|tolerable        |     2|
-|train            |     2|
-|tube             |     2|
-|unremarkable     |     2|
-|vagina           |     2|
-|visit            |     2|
-|vomiting         |     2|
-|weakness         |     2|
-|week             |     2|
-|weekend          |     2|
-|where            |     2|
-|withdrawn        |     2|
-|workstation      |     2|
-|yyyy             |     2|
-|01               |     1|
-|aid              |     1|
-|arrival          |     1|
-|breasts          |     1|
-|cough            |     1|
-|daytime          |     1|
-|directly         |     1|
-|dysfunction      |     1|
-|guidance         |     1|
-|improved         |     1|
-|intercourse      |     1|
-|light            |     1|
-|movement         |     1|
-|parents          |     1|
-|performance      |     1|
-|put              |     1|
-|reports          |     1|
-|restrictions     |     1|
-|term             |     1|
-|vol              |     1|
 
 ```r
-##Frequency of words that appear after the word 'patient'
-patient %>% count(word3, sort = TRUE) %>% knitr::kable()
+##Remove stop words and numbers
+patient %>%
+  filter(word1 == "patient") %>%
+  filter(!(word2 %in% stop_words$word) & !grepl("^[0-9]+$", x = word2)) %>%
+  count(word2, sort = TRUE) %>%
+  top_n(20, n) %>% knitr::kable()
 ```
 
 
 
-|word3            |    n|
-|:----------------|----:|
-|was              | 6291|
-|is               | 3332|
-|has              | 1417|
-|tolerated        |  994|
-|had              |  886|
-|will             |  616|
-|denies           |  552|
-|and              |  377|
-|states           |  363|
-|does             |  334|
-|also             |  301|
-|in               |  246|
-|did              |  232|
-|to               |  215|
-|the              |  200|
-|underwent        |  180|
-|received         |  160|
-|reports          |  155|
-|with             |  141|
-|understood       |  113|
-|presents         |   91|
-|should           |   83|
-|lives            |   81|
-|who              |   79|
-|on               |   77|
-|presented        |   72|
-|admits           |   69|
-|appears          |   68|
-|for              |   67|
-|including        |   67|
-|would            |   65|
-|denied           |   62|
-|then             |   61|
-|reported         |   58|
-|at               |   57|
-|remained         |   56|
-|as               |   52|
-|went             |   52|
-|understands      |   51|
-|subsequently     |   49|
-|of               |   47|
-|stated           |   46|
-|she              |   44|
-|may              |   40|
-|continued        |   38|
-|returned         |   38|
-|agreed           |   36|
-|he               |   36|
-|a                |   35|
-|continues        |   35|
-|after            |   34|
-|came             |   34|
-|comes            |   32|
-|under            |   32|
-|appeared         |   31|
-|i                |   31|
-|back             |   30|
-|currently        |   30|
-|desires          |   30|
-|left             |   29|
-|began            |   28|
-|experienced      |   28|
-|felt             |   28|
-|identification   |   28|
-|that             |   28|
-|could            |   27|
-|developed        |   27|
-|started          |   27|
-|today            |   27|
-|complains        |   25|
-|describes        |   25|
-|this             |   25|
-|being            |   24|
-|informed         |   24|
-|takes            |   24|
-|discharged       |   23|
-|notes            |   23|
-|said             |   23|
-|but              |   22|
-|can              |   22|
-|complained       |   22|
-|initially        |   22|
-|needs            |   22|
-|noted            |   22|
-|from             |   21|
-|became           |   20|
-|says             |   20|
-|about            |   19|
-|apparently       |   19|
-|brought          |   18|
-|cannot           |   18|
-|gave             |   18|
-|regarding        |   18|
-|relates          |   18|
-|still            |   18|
-|recently         |   17|
-|smokes           |   17|
-|however          |   16|
-|returns          |   16|
-|seems            |   16|
-|it               |   15|
-|shows            |   15|
-|ambulates        |   14|
-|be               |   14|
-|by               |   14|
-|decided          |   14|
-|exercised        |   14|
-|herself          |   14|
-|needed           |   14|
-|procedure        |   14|
-|all              |   13|
-|moves            |   13|
-|risks            |   13|
-|up               |   13|
-|elected          |   12|
-|having           |   12|
-|instructions     |   12|
-|wished           |   12|
-|woke             |   12|
-|arrived          |   11|
-|completed        |   11|
-|gives            |   11|
-|history          |   11|
-|include          |   11|
-|physical         |   11|
-|return           |   11|
-|suffered         |   11|
-|already          |   10|
-|becomes          |   10|
-|demonstrates     |   10|
-|feels            |   10|
-|follow           |   10|
-|himself          |   10|
-|home             |   10|
-|improved         |   10|
-|lying            |   10|
-|now              |   10|
-|recovered        |   10|
-|refuses          |   10|
-|requested        |   10|
-|we               |   10|
-|2                |    9|
-|an               |    9|
-|because          |    9|
-|care             |    9|
-|her              |    9|
-|includes         |    9|
-|later            |    9|
-|prepped          |    9|
-|provided         |    9|
-|taken            |    9|
-|took             |    9|
-|undergo          |    9|
-|walks            |    9|
-|weighs           |    9|
-|abc              |    8|
-|again            |    8|
-|along            |    8|
-|brings           |    8|
-|clinically       |    8|
-|consent          |    8|
-|discussing       |    8|
-|indicates        |    8|
-|made             |    8|
-|met              |    8|
-|passed           |    8|
-|position         |    8|
-|previously       |    8|
-|quit             |    8|
-|rates            |    8|
-|requests         |    8|
-|scored           |    8|
-|transferred      |    8|
-|wanted           |    8|
-|according        |    7|
-|actually         |    7|
-|died             |    7|
-|family           |    7|
-|included         |    7|
-|into             |    7|
-|might            |    7|
-|once             |    7|
-|operative        |    7|
-|placed           |    7|
-|positioning      |    7|
-|referred         |    7|
-|right            |    7|
-|speaks           |    7|
-|spent            |    7|
-|upon             |    7|
-|used             |    7|
-|when             |    7|
-|which            |    7|
-|works            |    7|
-|admitted         |    6|
-|daughter         |    6|
-|dear             |    6|
-|declined         |    6|
-|described        |    6|
-|exhibits         |    6|
-|his              |    6|
-|movement         |    6|
-|not              |    6|
-|opted            |    6|
-|or               |    6|
-|oriented         |    6|
-|plans            |    6|
-|questionnaire    |    6|
-|refused          |    6|
-|relationship     |    6|
-|remains          |    6|
-|resides          |    6|
-|severe           |    6|
-|signed           |    6|
-|spends           |    6|
-|supine           |    6|
-|there            |    6|
-|unable           |    6|
-|3                |    5|
-|although         |    5|
-|are              |    5|
-|asked            |    5|
-|been             |    5|
-|continue         |    5|
-|eats             |    5|
-|ended            |    5|
-|expressed        |    5|
-|first            |    5|
-|have             |    5|
-|indicated        |    5|
-|just             |    5|
-|last             |    5|
-|maintained       |    5|
-|never            |    5|
-|performs         |    5|
-|plan             |    5|
-|prior            |    5|
-|since            |    5|
-|sustained        |    5|
-|talking          |    5|
-|tends            |    5|
-|tolerating       |    5|
-|verbalized       |    5|
-|vomited          |    5|
-|wants            |    5|
-|were             |    5|
-|accepted         |    4|
-|advises          |    4|
-|assessment       |    4|
-|attended         |    4|
-|believes         |    4|
-|clearly          |    4|
-|closely          |    4|
-|consented        |    4|
-|deteriorated     |    4|
-|dr               |    4|
-|drinks           |    4|
-|during           |    4|
-|either           |    4|
-|extremity        |    4|
-|fell             |    4|
-|followed         |    4|
-|goal             |    4|
-|got              |    4|
-|identified       |    4|
-|immediately      |    4|
-|increase         |    4|
-|instructed       |    4|
-|looks            |    4|
-|makes            |    4|
-|no               |    4|
-|nothing          |    4|
-|obtained         |    4|
-|only             |    4|
-|otherwise        |    4|
-|over             |    4|
-|overnight        |    4|
-|participated     |    4|
-|positioned       |    4|
-|probably         |    4|
-|progressed       |    4|
-|pushed           |    4|
-|put              |    4|
-|regained         |    4|
-|required         |    4|
-|reviewing        |    4|
-|ruled            |    4|
-|seemed           |    4|
-|sees             |    4|
-|stopped          |    4|
-|tells            |    4|
-|therefore        |    4|
-|told             |    4|
-|unfortunately    |    4|
-|voiced           |    4|
-|well             |    4|
-|wishes           |    4|
-|without          |    4|
-|13               |    3|
-|2.5              |    3|
-|achieved         |    3|
-|attempted        |    3|
-|based            |    3|
-|calcium          |    3|
-|called           |    3|
-|claimed          |    3|
-|compression      |    3|
-|consisting       |    3|
-|consulted        |    3|
-|cries            |    3|
-|deficits         |    3|
-|delivered        |    3|
-|deny             |    3|
-|desired          |    3|
-|dynamics         |    3|
-|elects           |    3|
-|enjoys           |    3|
-|estimates        |    3|
-|eventually       |    3|
-|explained        |    3|
-|followup         |    3|
-|forgot           |    3|
-|given            |    3|
-|here             |    3|
-|impression       |    3|
-|information      |    3|
-|laid             |    3|
-|maintains        |    3|
-|meds             |    3|
-|need             |    3|
-|originally       |    3|
-|other            |    3|
-|out              |    3|
-|post             |    3|
-|postoperatively  |    3|
-|presenting       |    3|
-|proceeded        |    3|
-|profile          |    3|
-|progressively    |    3|
-|ran              |    3|
-|ranks            |    3|
-|receive          |    3|
-|reduce           |    3|
-|sat              |    3|
-|say              |    3|
-|scheduled        |    3|
-|seated           |    3|
-|significant      |    3|
-|sitting          |    3|
-|smoked           |    3|
-|spoke            |    3|
-|state            |    3|
-|status           |    3|
-|subjectively     |    3|
-|taking           |    3|
-|tests            |    3|
-|though           |    3|
-|tried            |    3|
-|turns            |    3|
-|tylenol          |    3|
-|use              |    3|
-|weight           |    3|
-|while            |    3|
-|within           |    3|
-|work             |    3|
-|worked           |    3|
-|37               |    2|
-|4                |    2|
-|600              |    2|
-|72               |    2|
-|acutely          |    2|
-|additionally     |    2|
-|af               |    2|
-|afterward        |    2|
-|aggressive       |    2|
-|agrees           |    2|
-|alert            |    2|
-|allergies        |    2|
-|alternatives     |    2|
-|ambulated        |    2|
-|ample            |    2|
-|answered         |    2|
-|attempts         |    2|
-|attends          |    2|
-|awake            |    2|
-|awoke            |    2|
-|axial            |    2|
-|bathes           |    2|
-|begin            |    2|
-|beginning        |    2|
-|best             |    2|
-|between          |    2|
-|biological       |    2|
-|bradycardic      |    2|
-|breast           |    2|
-|breathing        |    2|
-|call             |    2|
-|catheterizing    |    2|
-|certainly        |    2|
-|chart            |    2|
-|claims           |    2|
-|condition        |    2|
-|confirmed        |    2|
-|consumed         |    2|
-|continually      |    2|
-|converted        |    2|
-|correctly        |    2|
-|cpt              |    2|
-|declines         |    2|
-|deemed           |    2|
-|despite          |    2|
-|diagnoses        |    2|
-|discomfort       |    2|
-|discontinue      |    2|
-|dorsal           |    2|
-|draped           |    2|
-|eat              |    2|
-|emphatically     |    2|
-|endorsed         |    2|
-|endorses         |    2|
-|enters           |    2|
-|enthusiastically |    2|
-|especially       |    2|
-|evaluation       |    2|
-|even             |    2|
-|ever             |    2|
-|exhibited        |    2|
-|experimented     |    2|
-|expresses        |    2|
-|extubated        |    2|
-|eye              |    2|
-|failed           |    2|
-|finished         |    2|
-|follows          |    2|
-|found            |    2|
-|get              |    2|
-|giving           |    2|
-|goals            |    2|
-|goes             |    2|
-|going            |    2|
-|heal             |    2|
-|healed           |    2|
-|hemodynamically  |    2|
-|horizontal       |    2|
-|hospital         |    2|
-|hospitalized     |    2|
-|identifies       |    2|
-|if               |    2|
-|incapable        |    2|
-|incidentally     |    2|
-|ingested         |    2|
-|interestingly    |    2|
-|intraoperatively |    2|
-|intubated        |    2|
-|iv               |    2|
-|jerked           |    2|
-|knee             |    2|
-|knew             |    2|
-|knows            |    2|
-|laboratory       |    2|
-|likely           |    2|
-|lost             |    2|
-|mainly           |    2|
-|maximized        |    2|
-|medically        |    2|
-|medication       |    2|
-|mini             |    2|
-|missing          |    2|
-|most             |    2|
-|motivation       |    2|
-|moved            |    2|
-|mrs              |    2|
-|nature           |    2|
-|neglected        |    2|
-|noncompliant     |    2|
-|noticed          |    2|
-|npo              |    2|
-|nursing          |    2|
-|off              |    2|
-|opting           |    2|
-|paced            |    2|
-|past             |    2|
-|patient          |    2|
-|per              |    2|
-|performed        |    2|
-|physician        |    2|
-|planned          |    2|
-|please           |    2|
-|possesses        |    2|
-|postprocedure    |    2|
-|preoperative     |    2|
-|preoperatively   |    2|
-|pressure         |    2|
-|properly         |    2|
-|psychologic      |    2|
-|pursuing         |    2|
-|rapidly          |    2|
-|re               |    2|
-|reached          |    2|
-|recalls          |    2|
-|receives         |    2|
-|recheck          |    2|
-|recollection     |    2|
-|refusing         |    2|
-|related          |    2|
-|replies          |    2|
-|reportedly       |    2|
-|responded        |    2|
-|restricted       |    2|
-|retained         |    2|
-|retains          |    2|
-|retired          |    2|
-|revealed         |    2|
-|reviewed         |    2|
-|saw              |    2|
-|secondary        |    2|
-|see              |    2|
-|seeks            |    2|
-|seen             |    2|
-|semi             |    2|
-|sent             |    2|
-|set              |    2|
-|showed           |    2|
-|sign             |    2|
-|simply           |    2|
-|sincerely        |    2|
-|slipped          |    2|
-|snores           |    2|
-|so               |    2|
-|sought           |    2|
-|stabilize        |    2|
-|stands           |    2|
-|stating          |    2|
-|stood            |    2|
-|stop             |    2|
-|stopping         |    2|
-|stressing        |    2|
-|suffers          |    2|
-|supportive       |    2|
-|supposedly       |    2|
-|terminated       |    2|
-|through          |    2|
-|together         |    2|
-|tpa              |    2|
-|try              |    2|
-|tympanic         |    2|
-|ultimately       |    2|
-|undergoes        |    2|
-|unlike           |    2|
-|upper            |    2|
-|urinates         |    2|
-|using            |    2|
-|usually          |    2|
-|utilized         |    2|
-|verbalizes       |    2|
-|very             |    2|
-|via              |    2|
-|visit            |    2|
-|vitamin          |    2|
-|voices           |    2|
-|weighed          |    2|
-|where            |    2|
-|whether          |    2|
-|whom             |    2|
-|wife's           |    2|
-|wore             |    2|
-|wound            |    2|
-|xxx              |    2|
-|abcd             |    1|
-|ate              |    1|
-|cut              |    1|
-|excluding        |    1|
-|expired          |    1|
-|landed           |    1|
-|leaving          |    1|
-|lived            |    1|
-|managed          |    1|
-|medical          |    1|
-|primarily        |    1|
-|recalled         |    1|
-|routinely        |    1|
-|safety           |    1|
-|slept            |    1|
-|special          |    1|
-|stayed           |    1|
-|they             |    1|
-|transforaminally |    1|
-|walked           |    1|
+|word2        |   n|
+|:------------|---:|
+|tolerated    | 994|
+|denies       | 552|
+|underwent    | 180|
+|received     | 160|
+|reports      | 155|
+|understood   | 113|
+|lives        |  81|
+|admits       |  69|
+|appears      |  68|
+|including    |  67|
+|denied       |  62|
+|reported     |  58|
+|remained     |  56|
+|understands  |  51|
+|subsequently |  49|
+|stated       |  46|
+|continued    |  38|
+|returned     |  38|
+|agreed       |  36|
+|continues    |  35|
 
+```r
+patient %>%
+  filter(word2 == "patient") %>%
+  filter(!(word1 %in% stop_words$word) & !grepl("^[0-9]+$", word1)) %>%
+  count(word1, sort = TRUE) %>%
+  top_n(20, n) %>% knitr::kable()
+```
+
+
+
+|word1        |   n|
+|:------------|---:|
+|history      | 101|
+|procedure    |  32|
+|female       |  26|
+|sample       |  23|
+|male         |  22|
+|illness      |  16|
+|plan         |  16|
+|indications  |  15|
+|allergies    |  14|
+|correct      |  11|
+|detail       |  11|
+|normal       |  10|
+|exam         |   9|
+|lbs          |   9|
+|instructions |   8|
+|minutes      |   8|
+|recommend    |   8|
+|systems      |   8|
+|day          |   7|
+|digits       |   7|
+|subjective   |   7|
+
+## Question 6
+### Which words are most used in each of the specialties. you can use group_by() and top_n() from dplyr to have the calculations be done within each specialty. Remember to remove stopwords. How about the 5 most used words?
+The table below shows the top 5 words per medical specialty. Some specialties, such as Allergy / Immunology, have ties in the ranking and, therefore, more than five rows are shown.
+
+```r
+mtsamples %>% group_by(medical_specialty) %>%
+  unnest_tokens(token, transcription) %>% 
+  count(token, sort = TRUE) %>% 
+  anti_join(stop_words, by = c("token" = "word")) %>% 
+  filter(!grepl("^[0-9]+$", x = token)) %>%
+  top_n(5, n) %>%
+  arrange(medical_specialty, desc(n)) %>% knitr::kable()
+```
+
+
+
+|medical_specialty             |token        |    n|
+|:-----------------------------|:------------|----:|
+|Allergy / Immunology          |history      |   38|
+|Allergy / Immunology          |noted        |   23|
+|Allergy / Immunology          |patient      |   22|
+|Allergy / Immunology          |allergies    |   21|
+|Allergy / Immunology          |nasal        |   13|
+|Allergy / Immunology          |past         |   13|
+|Autopsy                       |left         |   83|
+|Autopsy                       |inch         |   59|
+|Autopsy                       |neck         |   55|
+|Autopsy                       |anterior     |   47|
+|Autopsy                       |body         |   40|
+|Bariatrics                    |patient      |   62|
+|Bariatrics                    |history      |   50|
+|Bariatrics                    |weight       |   36|
+|Bariatrics                    |surgery      |   34|
+|Bariatrics                    |gastric      |   30|
+|Cardiovascular / Pulmonary    |left         | 1550|
+|Cardiovascular / Pulmonary    |patient      | 1516|
+|Cardiovascular / Pulmonary    |artery       | 1085|
+|Cardiovascular / Pulmonary    |coronary     |  681|
+|Cardiovascular / Pulmonary    |history      |  654|
+|Chiropractic                  |pain         |  187|
+|Chiropractic                  |patient      |   85|
+|Chiropractic                  |dr           |   66|
+|Chiropractic                  |history      |   56|
+|Chiropractic                  |left         |   54|
+|Consult - History and Phy.    |patient      | 3046|
+|Consult - History and Phy.    |history      | 2820|
+|Consult - History and Phy.    |normal       | 1368|
+|Consult - History and Phy.    |pain         | 1153|
+|Consult - History and Phy.    |mg           |  908|
+|Cosmetic / Plastic Surgery    |patient      |  116|
+|Cosmetic / Plastic Surgery    |procedure    |   98|
+|Cosmetic / Plastic Surgery    |breast       |   95|
+|Cosmetic / Plastic Surgery    |skin         |   88|
+|Cosmetic / Plastic Surgery    |incision     |   67|
+|Dentistry                     |patient      |  195|
+|Dentistry                     |tooth        |  108|
+|Dentistry                     |teeth        |  104|
+|Dentistry                     |left         |   94|
+|Dentistry                     |procedure    |   82|
+|Dermatology                   |patient      |  101|
+|Dermatology                   |skin         |  101|
+|Dermatology                   |cm           |   77|
+|Dermatology                   |left         |   58|
+|Dermatology                   |procedure    |   44|
+|Diets and Nutritions          |patient      |   43|
+|Diets and Nutritions          |weight       |   40|
+|Diets and Nutritions          |carbohydrate |   37|
+|Diets and Nutritions          |day          |   28|
+|Diets and Nutritions          |food         |   27|
+|Diets and Nutritions          |plan         |   27|
+|Discharge Summary             |patient      |  672|
+|Discharge Summary             |discharge    |  358|
+|Discharge Summary             |mg           |  301|
+|Discharge Summary             |history      |  208|
+|Discharge Summary             |hospital     |  183|
+|Emergency Room Reports        |patient      |  685|
+|Emergency Room Reports        |history      |  356|
+|Emergency Room Reports        |pain         |  273|
+|Emergency Room Reports        |normal       |  255|
+|Emergency Room Reports        |denies       |  149|
+|Endocrinology                 |thyroid      |  129|
+|Endocrinology                 |patient      |  121|
+|Endocrinology                 |left         |   63|
+|Endocrinology                 |history      |   57|
+|Endocrinology                 |dissection   |   45|
+|Endocrinology                 |gland        |   45|
+|Endocrinology                 |nerve        |   45|
+|ENT - Otolaryngology          |patient      |  415|
+|ENT - Otolaryngology          |nasal        |  281|
+|ENT - Otolaryngology          |left         |  219|
+|ENT - Otolaryngology          |ear          |  182|
+|ENT - Otolaryngology          |procedure    |  181|
+|Gastroenterology              |patient      |  872|
+|Gastroenterology              |procedure    |  470|
+|Gastroenterology              |history      |  341|
+|Gastroenterology              |normal       |  328|
+|Gastroenterology              |colon        |  240|
+|General Medicine              |patient      | 1356|
+|General Medicine              |history      | 1027|
+|General Medicine              |normal       |  717|
+|General Medicine              |pain         |  567|
+|General Medicine              |mg           |  503|
+|Hematology - Oncology         |patient      |  316|
+|Hematology - Oncology         |history      |  290|
+|Hematology - Oncology         |left         |  187|
+|Hematology - Oncology         |mg           |  107|
+|Hematology - Oncology         |mass         |   97|
+|Hospice - Palliative Care     |patient      |   43|
+|Hospice - Palliative Care     |mg           |   28|
+|Hospice - Palliative Care     |history      |   27|
+|Hospice - Palliative Care     |daughter     |   22|
+|Hospice - Palliative Care     |family       |   19|
+|Hospice - Palliative Care     |pain         |   19|
+|IME-QME-Work Comp etc.        |pain         |  152|
+|IME-QME-Work Comp etc.        |patient      |  106|
+|IME-QME-Work Comp etc.        |dr           |   82|
+|IME-QME-Work Comp etc.        |injury       |   81|
+|IME-QME-Work Comp etc.        |left         |   70|
+|Lab Medicine - Pathology      |cm           |   35|
+|Lab Medicine - Pathology      |tumor        |   35|
+|Lab Medicine - Pathology      |lymph        |   30|
+|Lab Medicine - Pathology      |lobe         |   29|
+|Lab Medicine - Pathology      |upper        |   20|
+|Letters                       |pain         |   80|
+|Letters                       |abc          |   71|
+|Letters                       |patient      |   65|
+|Letters                       |normal       |   53|
+|Letters                       |dr           |   46|
+|Nephrology                    |patient      |  348|
+|Nephrology                    |renal        |  257|
+|Nephrology                    |history      |  160|
+|Nephrology                    |kidney       |  144|
+|Nephrology                    |left         |  132|
+|Neurology                     |left         |  672|
+|Neurology                     |patient      |  648|
+|Neurology                     |normal       |  485|
+|Neurology                     |history      |  429|
+|Neurology                     |time         |  278|
+|Neurosurgery                  |patient      |  374|
+|Neurosurgery                  |c5           |  289|
+|Neurosurgery                  |c6           |  266|
+|Neurosurgery                  |procedure    |  247|
+|Neurosurgery                  |left         |  222|
+|Obstetrics / Gynecology       |patient      |  628|
+|Obstetrics / Gynecology       |uterus       |  317|
+|Obstetrics / Gynecology       |procedure    |  301|
+|Obstetrics / Gynecology       |incision     |  293|
+|Obstetrics / Gynecology       |normal       |  276|
+|Office Notes                  |normal       |  230|
+|Office Notes                  |negative     |  193|
+|Office Notes                  |patient      |   94|
+|Office Notes                  |history      |   76|
+|Office Notes                  |noted        |   60|
+|Ophthalmology                 |eye          |  456|
+|Ophthalmology                 |patient      |  258|
+|Ophthalmology                 |procedure    |  176|
+|Ophthalmology                 |anterior     |  150|
+|Ophthalmology                 |chamber      |  149|
+|Orthopedic                    |patient      | 1711|
+|Orthopedic                    |left         |  998|
+|Orthopedic                    |pain         |  763|
+|Orthopedic                    |procedure    |  669|
+|Orthopedic                    |lateral      |  472|
+|Pain Management               |patient      |  236|
+|Pain Management               |procedure    |  197|
+|Pain Management               |needle       |  156|
+|Pain Management               |injected     |   76|
+|Pain Management               |pain         |   76|
+|Pediatrics - Neonatal         |patient      |  247|
+|Pediatrics - Neonatal         |history      |  235|
+|Pediatrics - Neonatal         |normal       |  155|
+|Pediatrics - Neonatal         |child        |   82|
+|Pediatrics - Neonatal         |mom          |   82|
+|Physical Medicine - Rehab     |patient      |  220|
+|Physical Medicine - Rehab     |left         |  104|
+|Physical Medicine - Rehab     |pain         |   95|
+|Physical Medicine - Rehab     |motor        |   62|
+|Physical Medicine - Rehab     |history      |   54|
+|Podiatry                      |foot         |  232|
+|Podiatry                      |patient      |  231|
+|Podiatry                      |left         |  137|
+|Podiatry                      |tendon       |   98|
+|Podiatry                      |incision     |   96|
+|Psychiatry / Psychology       |patient      |  532|
+|Psychiatry / Psychology       |history      |  344|
+|Psychiatry / Psychology       |mg           |  183|
+|Psychiatry / Psychology       |mother       |  164|
+|Psychiatry / Psychology       |reported     |  141|
+|Radiology                     |left         |  701|
+|Radiology                     |normal       |  644|
+|Radiology                     |patient      |  304|
+|Radiology                     |exam         |  302|
+|Radiology                     |mild         |  242|
+|Rheumatology                  |history      |   50|
+|Rheumatology                  |patient      |   34|
+|Rheumatology                  |mg           |   26|
+|Rheumatology                  |pain         |   23|
+|Rheumatology                  |day          |   22|
+|Rheumatology                  |examination  |   22|
+|Rheumatology                  |joints       |   22|
+|Sleep Medicine                |sleep        |  143|
+|Sleep Medicine                |patient      |   69|
+|Sleep Medicine                |apnea        |   35|
+|Sleep Medicine                |activity     |   31|
+|Sleep Medicine                |stage        |   29|
+|SOAP / Chart / Progress Notes |patient      |  537|
+|SOAP / Chart / Progress Notes |mg           |  302|
+|SOAP / Chart / Progress Notes |history      |  254|
+|SOAP / Chart / Progress Notes |pain         |  239|
+|SOAP / Chart / Progress Notes |blood        |  194|
+|Speech - Language             |patient      |  105|
+|Speech - Language             |therapy      |   41|
+|Speech - Language             |speech       |   35|
+|Speech - Language             |patient's    |   28|
+|Speech - Language             |evaluation   |   17|
+|Speech - Language             |goals        |   17|
+|Speech - Language             |term         |   17|
+|Speech - Language             |time         |   17|
+|Surgery                       |patient      | 4855|
+|Surgery                       |left         | 3263|
+|Surgery                       |procedure    | 3243|
+|Surgery                       |anesthesia   | 1687|
+|Surgery                       |incision     | 1641|
+|Urology                       |patient      |  776|
+|Urology                       |bladder      |  357|
+|Urology                       |procedure    |  306|
+|Urology                       |left         |  288|
+|Urology                       |history      |  196|
+
+## Question 7
+### 

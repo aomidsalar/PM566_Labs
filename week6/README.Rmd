@@ -58,6 +58,7 @@ mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) 
 ## Question 3
 
 ### Redo visualization but remove stopwords as well as numbers.
+Now we can see more terms that are related to this dataset.
 
 ```{r question3}
 mtsamples %>%
@@ -72,7 +73,8 @@ mtsamples %>%
 ```
 
 ## Question 4
-### Repeat question 2, but this time tokenize into bi-grams. A lot of these contain stop-words, so this is not very informative.
+### Repeat question 2, but this time tokenize into bi-grams.
+A lot of these contain stop-words, so this is not very informative.
 ```{r question4, cache = TRUE}
 mtsamples %>% unnest_ngrams(ngram, transcription, n = 2) %>% 
   count(ngram, sort = TRUE) %>%
@@ -96,14 +98,39 @@ mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>%
 ## Question 5
 ### Using the results you got from questions 4. Pick a word and count the words that appears after and before it.
 Picking word *patient*
-```{r, cache = TRUE}
-patient <- mtsamples %>% unnest_ngrams(ngram, transcription, n = 3) %>% 
-  separate(ngram, into = c("word1", "word2", "word3"), sep = " ") %>%
-  select(word1, word2, word3) %>%
-  filter(word2 == "patient")
-##Frequency of words that appear before the word 'patient'
-patient %>% count(word1, sort = TRUE) %>% knitr::kable()
-##Frequency of words that appear after the word 'patient'
-patient %>% count(word3, sort = TRUE) %>% knitr::kable()
+```{r question 5, cache = TRUE}
+patient <- mtsamples %>% unnest_ngrams(ngram, transcription, n = 2) %>% 
+  separate(ngram, into = c("word1", "word2"), sep = " ") %>%
+  select(word1, word2) %>%
+  filter(word1 == "patient" | word2 == "patient")
 ```
 
+```{r question5 - remove stops and make tables}
+##Remove stop words and numbers
+patient %>%
+  filter(word1 == "patient") %>%
+  filter(!(word2 %in% stop_words$word) & !grepl("^[0-9]+$", x = word2)) %>%
+  count(word2, sort = TRUE) %>%
+  top_n(20, n) %>% knitr::kable()
+patient %>%
+  filter(word2 == "patient") %>%
+  filter(!(word1 %in% stop_words$word) & !grepl("^[0-9]+$", word1)) %>%
+  count(word1, sort = TRUE) %>%
+  top_n(20, n) %>% knitr::kable()
+```
+
+## Question 6
+### Which words are most used in each of the specialties. you can use group_by() and top_n() from dplyr to have the calculations be done within each specialty. Remember to remove stopwords. How about the 5 most used words?
+The table below shows the top 5 words per medical specialty. Some specialties, such as Allergy / Immunology, have ties in the ranking and, therefore, more than five rows are shown.
+```{r question 6}
+mtsamples %>% group_by(medical_specialty) %>%
+  unnest_tokens(token, transcription) %>% 
+  count(token, sort = TRUE) %>% 
+  anti_join(stop_words, by = c("token" = "word")) %>% 
+  filter(!grepl("^[0-9]+$", x = token)) %>%
+  top_n(5, n) %>%
+  arrange(medical_specialty, desc(n)) %>% knitr::kable()
+```
+
+## Question 7
+### 
