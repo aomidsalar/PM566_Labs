@@ -36,10 +36,6 @@ head(mtsamples)
 ## 5     4 " 2-D Echocar… " Cardiovascular… " 2-D Echoc… "1.  The left … "cardiova…
 ## 6     5 " Morbid obes… " Bariatrics"     " Laparosco… "PREOPERATIVE … "bariatri…
 ```
-
-```r
-##piping it to knitr::kable() makes the table look pretty
-```
 ## Question 1
 ### What specialties do we have?
 There are 40 specialties in total within this dataset. The specialties do not seem to be evenly distributed: surgery, cardiovascular, consult, and orthopedic have the most amount of entries.
@@ -87,6 +83,7 @@ mtsamples %>% unnest_tokens(token, transcription) %>% count(token, sort = TRUE) 
 ## Question 3
 
 ### Redo visualization but remove stopwords as well as numbers.
+Now we can see more terms that are related to this dataset.
 
 
 ```r
@@ -104,7 +101,8 @@ mtsamples %>%
 ![](README_files/figure-html/question3-1.png)<!-- -->
 
 ## Question 4
-### Repeat question 2, but this time tokenize into bi-grams. A lot of these contain stop-words, so this is not very informative.
+### Repeat question 2, but this time tokenize into bi-grams.
+A lot of these contain stop-words, so this is not very informative.
 
 ```r
 mtsamples %>% unnest_ngrams(ngram, transcription, n = 2) %>% 
@@ -149,10 +147,12 @@ patient %>%
   filter(word1 == "patient") %>%
   filter(!(word2 %in% stop_words$word) & !grepl("^[0-9]+$", x = word2)) %>%
   count(word2, sort = TRUE) %>%
-  top_n(20, n) %>% knitr::kable()
+  top_n(20, n) %>% knitr::kable(caption = "Words after patient")
 ```
 
 
+
+Table: Words after patient
 
 |word2        |   n|
 |:------------|---:|
@@ -182,10 +182,12 @@ patient %>%
   filter(word2 == "patient") %>%
   filter(!(word1 %in% stop_words$word) & !grepl("^[0-9]+$", word1)) %>%
   count(word1, sort = TRUE) %>%
-  top_n(20, n) %>% knitr::kable()
+  top_n(20, n) %>% knitr::kable(caption = "Words before patient")
 ```
 
 
+
+Table: Words before patient
 
 |word1        |   n|
 |:------------|---:|
@@ -441,4 +443,10 @@ mtsamples %>% group_by(medical_specialty) %>%
 |Urology                       |history      |  196|
 
 ## Question 7
-### 
+### Find your own insight in the data.
+The top words that are appearing in each medical specialty make sense, and there are some that show up in many categories, such as *patient*, *history* and *procedure*. *Therapy* is a top word in the *Speech - Language* specialty; *sleep* is the top word in the *Sleep Medicine* category; and *incision* is a top word in the *Surgery* department -- these are all not surprising.
+
+It was interesting that the word *abc* is the second most common word in the *Letters* category. That may be used as a placeholder word.
+
+
+

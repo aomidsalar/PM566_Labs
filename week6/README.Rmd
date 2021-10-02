@@ -31,7 +31,6 @@ mtsamples <- read.csv(fn)
 ##convert data frame into tibble
 mtsamples <- as_tibble(mtsamples)
 head(mtsamples)
-##piping it to knitr::kable() makes the table look pretty
 ```
 ## Question 1
 ### What specialties do we have?
@@ -111,12 +110,12 @@ patient %>%
   filter(word1 == "patient") %>%
   filter(!(word2 %in% stop_words$word) & !grepl("^[0-9]+$", x = word2)) %>%
   count(word2, sort = TRUE) %>%
-  top_n(20, n) %>% knitr::kable()
+  top_n(20, n) %>% knitr::kable(caption = "Words after patient")
 patient %>%
   filter(word2 == "patient") %>%
   filter(!(word1 %in% stop_words$word) & !grepl("^[0-9]+$", word1)) %>%
   count(word1, sort = TRUE) %>%
-  top_n(20, n) %>% knitr::kable()
+  top_n(20, n) %>% knitr::kable(caption = "Words before patient")
 ```
 
 ## Question 6
@@ -133,4 +132,10 @@ mtsamples %>% group_by(medical_specialty) %>%
 ```
 
 ## Question 7
-### 
+### Find your own insight in the data.
+The top words that are appearing in each medical specialty make sense, and there are some that show up in many categories, such as *patient*, *history* and *procedure*. *Therapy* is a top word in the *Speech - Language* specialty; *sleep* is the top word in the *Sleep Medicine* category; and *incision* is a top word in the *Surgery* department -- these are all not surprising.
+
+It was interesting that the word *abc* is the second most common word in the *Letters* category. That may be used as a placeholder word.
+
+
+

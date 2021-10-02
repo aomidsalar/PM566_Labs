@@ -265,7 +265,6 @@ head(mtsamples)</code></pre>
 ## 4     3 &quot; 2-D M-Mode.… &quot; Cardiovascular… &quot; 2-D Echoc… &quot;2-D M-MODE: ,… &quot;cardiova…
 ## 5     4 &quot; 2-D Echocar… &quot; Cardiovascular… &quot; 2-D Echoc… &quot;1.  The left … &quot;cardiova…
 ## 6     5 &quot; Morbid obes… &quot; Bariatrics&quot;     &quot; Laparosco… &quot;PREOPERATIVE … &quot;bariatri…</code></pre>
-<pre class="r"><code>##piping it to knitr::kable() makes the table look pretty</code></pre>
 </div>
 <div id="question-1" class="section level2">
 <h2>Question 1</h2>
@@ -307,6 +306,7 @@ head(mtsamples)</code></pre>
 <h2>Question 3</h2>
 <div id="redo-visualization-but-remove-stopwords-as-well-as-numbers." class="section level3">
 <h3>Redo visualization but remove stopwords as well as numbers.</h3>
+<p>Now we can see more terms that are related to this dataset.</p>
 <pre class="r"><code>mtsamples %&gt;%
   unnest_tokens(token, transcription) %&gt;%
   count(token, sort = TRUE) %&gt;% 
@@ -321,8 +321,9 @@ head(mtsamples)</code></pre>
 </div>
 <div id="question-4" class="section level2">
 <h2>Question 4</h2>
-<div id="repeat-question-2-but-this-time-tokenize-into-bi-grams.-a-lot-of-these-contain-stop-words-so-this-is-not-very-informative." class="section level3">
-<h3>Repeat question 2, but this time tokenize into bi-grams. A lot of these contain stop-words, so this is not very informative.</h3>
+<div id="repeat-question-2-but-this-time-tokenize-into-bi-grams." class="section level3">
+<h3>Repeat question 2, but this time tokenize into bi-grams.</h3>
+<p>A lot of these contain stop-words, so this is not very informative.</p>
 <pre class="r"><code>mtsamples %&gt;% unnest_ngrams(ngram, transcription, n = 2) %&gt;% 
   count(ngram, sort = TRUE) %&gt;%
   top_n(20, n) %&gt;%
@@ -353,8 +354,9 @@ patient %&gt;%
   filter(word1 == &quot;patient&quot;) %&gt;%
   filter(!(word2 %in% stop_words$word) &amp; !grepl(&quot;^[0-9]+$&quot;, x = word2)) %&gt;%
   count(word2, sort = TRUE) %&gt;%
-  top_n(20, n) %&gt;% knitr::kable()</code></pre>
+  top_n(20, n) %&gt;% knitr::kable(caption = &quot;Words after patient&quot;)</code></pre>
 <table>
+<caption>Words after patient</caption>
 <thead>
 <tr class="header">
 <th align="left">word2</th>
@@ -448,8 +450,9 @@ patient %&gt;%
   filter(word2 == &quot;patient&quot;) %&gt;%
   filter(!(word1 %in% stop_words$word) &amp; !grepl(&quot;^[0-9]+$&quot;, word1)) %&gt;%
   count(word1, sort = TRUE) %&gt;%
-  top_n(20, n) %&gt;% knitr::kable()</code></pre>
+  top_n(20, n) %&gt;% knitr::kable(caption = &quot;Words before patient&quot;)</code></pre>
 <table>
+<caption>Words before patient</caption>
 <thead>
 <tr class="header">
 <th align="left">word1</th>
@@ -1622,8 +1625,10 @@ patient %&gt;%
 </div>
 <div id="question-7" class="section level2">
 <h2>Question 7</h2>
-<div id="section" class="section level3">
-<h3></h3>
+<div id="find-your-own-insight-in-the-data." class="section level3">
+<h3>Find your own insight in the data.</h3>
+<p>The top words that are appearing in each medical specialty make sense, and there are some that show up in many categories, such as <em>patient</em>, <em>history</em> and <em>procedure</em>. <em>Therapy</em> is a top word in the <em>Speech - Language</em> specialty; <em>sleep</em> is the top word in the <em>Sleep Medicine</em> category; and <em>incision</em> is a top word in the <em>Surgery</em> department – these are all not surprising.</p>
+<p>It was interesting that the word <em>abc</em> is the second most common word in the <em>Letters</em> category. That may be used as a placeholder word.</p>
 </div>
 </div>
 
