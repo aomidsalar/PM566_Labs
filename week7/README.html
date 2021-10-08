@@ -262,8 +262,47 @@ counts &lt;- as.character(counts)
 numberpapers  &lt;- stringr::str_extract(counts, &quot;[:digit:]+.*[:digit:]&quot;)</code></pre>
 <div id="there-are-114592-papers-about-sars-cov2-on-pubmed" class="section level4">
 <h4>There are 114,592 papers about SARS-CoV2 on PubMed</h4>
-<p>##Question 2: Academic publications on COVID19 and Hawaii</p>
 </div>
+</div>
+<div id="question-2-academic-publications-on-covid19-and-hawaii" class="section level2">
+<h2>Question 2: Academic publications on COVID19 and Hawaii</h2>
+<pre class="r"><code>query_ids &lt;- GET(
+  url   = &quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi&quot;,
+  query = list(
+    db = &quot;pubmed&quot;,
+    term = &quot;covid19 hawaii&quot;,
+    retmax = 1000
+  )
+)
+
+# Extracting the content of the response of GET
+ids &lt;- httr::content(query_ids)</code></pre>
+</div>
+<div id="question-3" class="section level2">
+<h2>Question 3</h2>
+<pre class="r"><code>#ids_list &lt;- xml2::as_list(ids)
+# Turn the result into a character vector
+ids &lt;- as.character(ids)
+
+# Find all the ids 
+ids &lt;- stringr::str_extract_all(ids, &quot;&lt;Id&gt;[:digit:]+&lt;/Id&gt;&quot;)[[1]]
+
+# Remove all the leading and trailing &lt;Id&gt; &lt;/Id&gt;. Make use of &quot;|&quot;
+ids &lt;- stringr::str_remove_all(ids, &quot;&lt;Id&gt;|&lt;/Id&gt;&quot;)
+#ids &lt;- stringr::str_remove_all(ids, &quot;&lt;?/Id&gt;&quot;)</code></pre>
+<pre class="r"><code>publications &lt;- GET(
+  url   = &quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi&quot;,
+  query = list(
+    db = &quot;pubmed&quot;,
+    id = I(paste(ids, collapse = &quot;,&quot;)),
+    retmax = 1000,
+    rettype = &quot;abstract&quot;
+    )
+)
+
+# Turning the output into character vector
+publications &lt;- httr::content(publications)
+publications_txt &lt;- as.character(publications)</code></pre>
 </div>
 
 
