@@ -57,7 +57,7 @@ query_ids <- GET(
 ids <- httr::content(query_ids)
 ```
 
-## Question 3
+## Question 3: Get details about the articles
 ```{r q3 get Ids}
 #ids_list <- xml2::as_list(ids)
 # Turn the result into a character vector
@@ -87,5 +87,52 @@ publications <- httr::content(publications)
 publications_txt <- as.character(publications)
 ```
 
+## Question 4: Distribution of universities, schools, and departments
+```{r q4 institution}
+institution <- str_extract_all(
+  str_to_lower(publications_txt),
+  "university\\s+of\\s+(southern|new|northern|the|south|eastern|western)?\\s*[[:alpha:]-]+|[[:alpha:]-]+\\sinstitute\\s+of\\s+[[:alpha:]-]+"
+  ) 
+institution <- unlist(institution)
+table(institution) %>% knitr::kable()
+
+```
+```{r q4 schools}
+schools_and_deps <- str_extract_all(
+  str_to_lower(publications_txt),
+  "school\\s+of\\s+[[:alpha:]-]+|department\\s+of\\s+[[:alpha:]-]+"
+  )
+table(schools_and_deps) %>% knitr::kable()
+```
+
+## Question 5: Form a Database
+```{r q5 abstracts}
+##Extracting all Abstracts from html
+pub_char_list <- xml2::xml_children(publications)
+pub_char_list <- sapply(pub_char_list, as.character)
+abstracts <- str_extract(pub_char_list, "<Abstract>[[:print:][:space:]]+</Abstract>")
+abstracts <- str_remove_all(abstracts, "</?[[:alnum:]- =\"]>+")
+#replacing newlines or multiple spaces with single space
+abstracts <- str_replace_all(abstracts, "[[:space:]]+", " ")
+##checking how many abstracts are not provided
+table(is.na(abstracts))
+```
+
+```{r titles}
+##Extracting all titles from html
+titles <- str_extract(pub_char_list, "<ArticleTitle>[[:print:][:space:]]+</ArticleTitle>")
+titles <- str_remove_all(titles, "</?[[:alnum:]-=\"]+>")
+#checking how many titles there are
+table(is.na(titles))
+```
+Putting everything into one dataframe `database`, and outputting first 10 rows into a table.
+```{r}
+database <- data.frame(
+  PubMedId = ids,
+  Title = titles,
+  Abstract = abstracts
+)
+knitr::kable(database[1:10,], caption = "Some Papers on PubMed about SARS-CoV2 and Hawaii")
+```
 
 
