@@ -37,8 +37,8 @@ microbenchmark::microbenchmark(
 ```
 ## Unit: relative
 ##       expr      min       lq     mean   median       uq      max neval
-##     fun1() 17.87953 21.33259 12.35694 20.65903 20.54659 2.981957   100
-##  fun1alt()  1.00000  1.00000  1.00000  1.00000  1.00000 1.000000   100
+##     fun1() 16.47503 20.76648 5.785012 19.78063 20.96979 1.107921   100
+##  fun1alt()  1.00000  1.00000 1.000000  1.00000  1.00000 1.000000   100
 ```
 
 ### 2. Find the Column Max
@@ -77,8 +77,97 @@ microbenchmark::microbenchmark(
 
 ```
 ## Unit: relative
-##        expr      min       lq     mean   median       uq   max neval
-##     fun2(x) 8.207192 8.188059 6.626285 7.310173 7.668163 1.527   100
-##  fun2alt(x) 1.000000 1.000000 1.000000 1.000000 1.000000 1.000   100
+##        expr      min       lq     mean   median       uq      max neval
+##     fun2(x) 9.786125 7.447454 4.276482 7.055437 6.784973 1.474565   100
+##  fun2alt(x) 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100
+```
+
+## Problem 3
+
+```r
+my_boot <- function(dat, stat, R, ncpus = 1L) {
+  
+  # Getting the random indices
+  n <- nrow(dat)
+  idx <- matrix(sample.int(n, n*R, TRUE), nrow=n, ncol=R)
+ 
+  # Making the cluster using `ncpus`
+  # STEP 1: GOES HERE create cluster
+  cl <- makePSOCKcluster(ncpus)
+  
+  # STEP 2: GOES HERE prepare cluster
+  clusterSetRNGStream(cl,123)
+  clusterExport(cl, c("stat", "dat", "idx"), envir = environment())
+    # STEP 3: THIS FUNCTION NEEDS TO BE REPLACES WITH parLapply
+  ans <- parLapply(cl = cl, seq_len(R), function(i) {
+    stat(dat[idx[,i], , drop=FALSE])
+  })
+  
+  # Coercing the list into a matrix
+  ans <- do.call(rbind, ans)
+  
+  # STEP 4: GOES HERE stop cluster
+  stopCluster(cl)
+  ans
+  
+}
+```
+
+
+```r
+# Bootstrap of an OLS
+my_stat <- function(d) coef(lm(y ~ x, data=d))
+
+# DATA SIM
+set.seed(1)
+n <- 500; R <- 5e3
+
+x <- cbind(rnorm(n)); y <- x*5 + rnorm(n)
+
+# Checking if we get something similar as lm
+ans0 <- confint(lm(y~x))
+ans1 <- my_boot(dat = data.frame(x, y), my_stat, R = R, ncpus = 2L)
+# You should get something like this
+t(apply(ans1, 2, quantile, c(.025,.975)))
+```
+
+```
+##                   2.5%      97.5%
+## (Intercept) -0.1395732 0.05291612
+## x            4.8686527 5.04503468
+```
+
+```r
+##                   2.5%      97.5%
+## (Intercept) -0.1372435 0.05074397
+## x            4.8680977 5.04539763
+ans0
+```
+
+```
+##                  2.5 %     97.5 %
+## (Intercept) -0.1379033 0.04797344
+## x            4.8650100 5.04883353
+```
+
+```r
+##                  2.5 %     97.5 %
+## (Intercept) -0.1379033 0.04797344
+## x            4.8650100 5.04883353
+system.time(my_boot(dat = data.frame(x, y), my_stat, R = 4000, ncpus = 1L))
+```
+
+```
+##    user  system elapsed 
+##   0.124   0.025   6.164
+```
+
+```r
+system.time(my_boot(dat = data.frame(x, y), my_stat, R = 4000, ncpus = 2L))
+```
+
+```
+##    user  system elapsed 
+##   0.198   0.037   4.538
 ```
 
