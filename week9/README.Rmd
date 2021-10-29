@@ -59,13 +59,18 @@ fun2 <- function(x) {
 }
 
 fun2alt <- function(x) {
-  
+  ## position of the max value per row of x
+  idx <- max.col(t(x))
+  ## get the max value
+  x[cbind(idx, 1:ncol(x))]
 }
+#Do we get the same values?
+all(fun2(x) == fun2alt(x))
 
 # Benchmarking
 microbenchmark::microbenchmark(
-  fun2(),
-  fun2alt()
+  fun2(x),
+  fun2alt(x), unit = 'relative'
 )
 ```
 
