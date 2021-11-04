@@ -12,8 +12,14 @@ output:
 ---
 
 
+## Problem 1
+#### Give yourself a few minutes to think about what you just learned. List three examples of problems that you believe may be solved using parallel computing, and check for packages on the HPC CRAN task view that may be related to it.
+1. Statistics on large data sets: I recently was working on a project where I had to run correlation tests on a data set with around 50 columns and 40,000 rows. I could have done this much more efficiently using parallel computing. (bigstatsr package)
+2. Spatial Transcriptomics / Seurat Clustering: This is done on single cell RNA-Seq data to define clusters in various clusters based on their expression. This can be done in parallel with the 'future' and 'Seurat' packages.
+3. Repetitive Tasks: Processes that need to be run regularly (ex. every day, every hour) with large amounts of data can be made more efficient using parallel computing (parallel package). For example, this could simplify climate modeling on a state-wide or national level.
 
 ## Problem 2
+
 
 ```r
 fun1 <- function(n = 100, k = 4, lambda = 4) {
@@ -22,7 +28,19 @@ fun1 <- function(n = 100, k = 4, lambda = 4) {
     x <- rbind(x, rpois(k, lambda))
   return(x)
 }
-#fun1(5,10)
+fun1(5,10)
+```
+
+```
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]    4    3    1    3    5    4    5    4    3     3
+## [2,]    5    1    5    3    1    3    1    7    4     0
+## [3,]    1    2    3    5    2    6    5    7    5     0
+## [4,]    2    5    6    3    5    5    3    3    4     5
+## [5,]    3    3    4    4    3    2    6    4    1     2
+```
+
+```r
 fun1alt <- function(n = 100, k = 4, lambda = 4) {
   matrix(rpois(n*k, lambda), nrow = n, ncol = k)
 }
@@ -36,9 +54,9 @@ microbenchmark::microbenchmark(
 
 ```
 ## Unit: relative
-##       expr      min       lq     mean   median       uq      max neval
-##     fun1() 16.47503 20.76648 5.785012 19.78063 20.96979 1.107921   100
-##  fun1alt()  1.00000  1.00000 1.000000  1.00000  1.00000 1.000000   100
+##       expr      min       lq     mean   median       uq       max neval
+##     fun1() 16.69486 21.90543 11.41709 21.43762 22.18993 0.9687642   100
+##  fun1alt()  1.00000  1.00000  1.00000  1.00000  1.00000 1.0000000   100
 ```
 
 ### 2. Find the Column Max
@@ -77,9 +95,9 @@ microbenchmark::microbenchmark(
 
 ```
 ## Unit: relative
-##        expr      min       lq     mean   median       uq      max neval
-##     fun2(x) 9.786125 7.447454 4.276482 7.055437 6.784973 1.474565   100
-##  fun2alt(x) 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100
+##        expr     min      lq     mean   median       uq       max neval
+##     fun2(x) 10.4924 8.05049 5.854933 8.093899 7.967874 0.8741729   100
+##  fun2alt(x)  1.0000 1.00000 1.000000 1.000000 1.000000 1.0000000   100
 ```
 
 ## Problem 3
@@ -159,7 +177,7 @@ system.time(my_boot(dat = data.frame(x, y), my_stat, R = 4000, ncpus = 1L))
 
 ```
 ##    user  system elapsed 
-##   0.124   0.025   6.164
+##   0.116   0.020   6.129
 ```
 
 ```r
@@ -168,6 +186,6 @@ system.time(my_boot(dat = data.frame(x, y), my_stat, R = 4000, ncpus = 2L))
 
 ```
 ##    user  system elapsed 
-##   0.198   0.037   4.538
+##   0.184   0.030   3.829
 ```
 

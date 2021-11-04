@@ -25,16 +25,22 @@ library('stringr')
 library('parallel')
 library('microbenchmark')
 ```
+## Problem 1
+#### Give yourself a few minutes to think about what you just learned. List three examples of problems that you believe may be solved using parallel computing, and check for packages on the HPC CRAN task view that may be related to it.
+1. Statistics on large data sets: I recently was working on a project where I had to run correlation tests on a data set with around 50 columns and 40,000 rows. I could have done this much more efficiently using parallel computing. (bigstatsr package)
+2. Spatial Transcriptomics / Seurat Clustering: This is done on single cell RNA-Seq data to define clusters in various clusters based on their expression. This can be done in parallel with the 'future' and 'Seurat' packages.
+3. Repetitive Tasks: Processes that need to be run regularly (ex. every day, every hour) with large amounts of data can be made more efficient using parallel computing (parallel package). For example, this could simplify climate modeling on a state-wide or national level.
 
 ## Problem 2
-```{r}
+
+```{r q2}
 fun1 <- function(n = 100, k = 4, lambda = 4) {
   x <- NULL
   for (i in 1:n)
     x <- rbind(x, rpois(k, lambda))
   return(x)
 }
-#fun1(5,10)
+fun1(5,10)
 fun1alt <- function(n = 100, k = 4, lambda = 4) {
   matrix(rpois(n*k, lambda), nrow = n, ncol = k)
 }
