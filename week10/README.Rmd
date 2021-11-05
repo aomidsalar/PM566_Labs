@@ -116,3 +116,55 @@ dbGetQuery(con, "SELECT *
       LIMIT 5")
 ```
 
+## Exercise 5
+
+```{r}
+dbGetQuery(con, "SELECT p.payment_id, p.amount
+FROM payment as p
+  INNER JOIN customer as c
+  ON p.customer_id = c.customer_id
+  WHERE c.last_name = 'DAVIS'")
+```
+
+## Exercise 6.1
+
+```{r}
+dbGetQuery(con, "SELECT COUNT (*)
+    FROM rental")
+```
+
+## Exercise 6.2
+
+```{r}
+dbGetQuery(con, "SELECT customer_id, COUNT(*)
+        FROM rental
+        GROUP BY customer_id
+        LIMIT 10")
+```
+
+## Exercise 6.3
+
+```{r}
+dbGetQuery(con, "SELECT customer_id, COUNT(*)
+        FROM rental
+        GROUP BY customer_id
+        ORDER BY COUNT(*) DESC
+        LIMIT 10")
+```
+
+## Exercise 6.4
+
+```{r}
+dbGetQuery(con, "SELECT customer_id, COUNT(*)
+        FROM rental
+        GROUP BY customer_id
+        HAVING COUNT(*) > 40
+        ORDER BY COUNT(*) DESC")
+```
+
+## Exercise 7
+
+```{r}
+
+```
+
