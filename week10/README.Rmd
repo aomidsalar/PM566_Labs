@@ -62,4 +62,22 @@ FROM actor
 WHERE last_name IN ('WILLIAMS', 'DAVIS')")
 ```
 
+## Exercise 3
+
+```{r}
+dbGetQuery(con, "SELECT DISTINCT customer_id
+FROM rental
+WHERE date(rental_date)= '2005-07-05'
+")
+```
+
+## Exercise 4
+
+```{r}
+q <- dbSendQuery(con, "SELECT *
+FROM payment
+WHERE amount IN (1.99, 7.99, 9.99)")
+dbFetch(q, n=10)
+##fetch query to get results in 10-row chunks
+```
 
