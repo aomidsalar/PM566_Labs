@@ -53,6 +53,9 @@ ORDER by last_name, first_name /* comments can be added
 on multiple lines like this */
 LIMIT 5")
 ```
+
+## Exercise 2
+
 ```{r ex2}
 dbGetQuery(con, "SELECT actor_id, first_name, last_name
 FROM actor

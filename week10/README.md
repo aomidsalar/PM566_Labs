@@ -75,6 +75,9 @@ LIMIT 5")
 ## 5      145        KIM     ALLEN
 ```
 
+## Exercise 2
+
+
 ```r
 dbGetQuery(con, "SELECT actor_id, first_name, last_name
 FROM actor

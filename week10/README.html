@@ -289,6 +289,9 @@ LIMIT 5&quot;)</code></pre>
 ## 3       92    KIRSTEN    AKROYD
 ## 4      118       CUBA     ALLEN
 ## 5      145        KIM     ALLEN</code></pre>
+</div>
+<div id="exercise-2" class="section level2">
+<h2>Exercise 2</h2>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT actor_id, first_name, last_name
 FROM actor
 WHERE last_name IN (&#39;WILLIAMS&#39;, &#39;DAVIS&#39;)&quot;)</code></pre>
