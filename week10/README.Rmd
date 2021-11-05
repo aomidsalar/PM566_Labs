@@ -43,10 +43,20 @@ dbGetQuery(con ,"PRAGMA table_info(actor)")
 ```
 
 ## Exercise 1
-```{r ex-1}
-#dbGetQuery(con , "SELECT actor ID, first name, last name
-#FROM actor
-#ORDER by last name, first name")
+
+Retrieve the actor ID, first name and last name for all actors using the actor table. Sort by last name and then by first name. Use LIMIT (head() in R) to output the top 5.
+
+```{r ex1}
+dbGetQuery(con , "SELECT actor_id, first_name, last_name
+FROM actor
+ORDER by last_name, first_name /* comments can be added
+on multiple lines like this */
+LIMIT 5")
+```
+```{r ex2}
+dbGetQuery(con, "SELECT actor_id, first_name, last_name
+FROM actor
+WHERE last_name IN ('WILLIAMS', 'DAVIS')")
 ```
 
 
