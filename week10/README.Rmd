@@ -71,7 +71,7 @@ WHERE date(rental_date)= '2005-07-05'
 ")
 ```
 
-## Exercise 4
+## Exercise 4.1
 
 ```{r}
 q <- dbSendQuery(con, "SELECT *
@@ -79,5 +79,40 @@ FROM payment
 WHERE amount IN (1.99, 7.99, 9.99)")
 dbFetch(q, n=10)
 ##fetch query to get results in 10-row chunks
+dbClearResult(q)
+```
+
+## Exercise 4.2
+
+```{r}
+dbGetQuery(con, "SELECT *
+      FROM payment
+      WHERE amount > 5
+      LIMIT 5")
+```
+How many of these records are there?
+```{r}
+dbGetQuery(con, "SELECT COUNT (*)
+      FROM payment
+      WHERE amount > 5
+      LIMIT 5")
+```
+
+How many per staff_id?
+```{r}
+dbGetQuery(con, "SELECT staff_id, COUNT (*) as N
+      FROM payment
+      WHERE amount > 5
+      GROUP BY staff_id
+      LIMIT 5")
+```
+
+## Exercise 4.3
+
+```{r}
+dbGetQuery(con, "SELECT *
+      FROM payment
+      WHERE amount > 5 AND amount < 8
+      LIMIT 5")
 ```
 
