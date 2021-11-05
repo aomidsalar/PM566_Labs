@@ -129,14 +129,14 @@ FROM payment as p
 ## Exercise 6.1
 
 ```{r}
-dbGetQuery(con, "SELECT COUNT (*)
+dbGetQuery(con, "SELECT COUNT (*) as Number_Rows
     FROM rental")
 ```
 
 ## Exercise 6.2
 
 ```{r}
-dbGetQuery(con, "SELECT customer_id, COUNT(*)
+dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
         LIMIT 10")
@@ -145,26 +145,65 @@ dbGetQuery(con, "SELECT customer_id, COUNT(*)
 ## Exercise 6.3
 
 ```{r}
-dbGetQuery(con, "SELECT customer_id, COUNT(*)
+dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
-        ORDER BY COUNT(*) DESC
+        ORDER BY Number_Rentals DESC
         LIMIT 10")
 ```
 
 ## Exercise 6.4
 
 ```{r}
-dbGetQuery(con, "SELECT customer_id, COUNT(*)
+dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
-        HAVING COUNT(*) > 40
-        ORDER BY COUNT(*) DESC")
+        HAVING Number_Rentals >= 40
+        ORDER BY Number_Rentals DESC")
 ```
 
 ## Exercise 7
 
 ```{r}
+dbGetQuery(con, "SELECT MAX(amount) as max_amount,
+    MIN(amount) as min_amount,
+    AVG(amount) as avg_amount,
+    SUM(amount) as sum_amount
+    FROM payment
+    LIMIT 10")
+```
 
+## Exercise 7.1
+
+```{r}
+dbGetQuery(con, "SELECT customer_id,
+    MAX(amount) as max_amount,
+    MIN(amount) as min_amount,
+    AVG(amount) as avg_amount,
+    SUM(amount) as sum_amount
+    FROM payment
+    GROUP BY customer_id
+    LIMIT 10")
+```
+
+## Exercise 7.2
+
+```{r}
+dbGetQuery(con, "SELECT customer_id,
+    COUNT (*) as number_payments,
+    MAX(amount) as max_amount,
+    MIN(amount) as min_amount,
+    AVG(amount) as avg_amount,
+    SUM(amount) as sum_amount
+    FROM payment
+    GROUP BY customer_id
+    HAVING COUNT(*) > 5
+    LIMIT 10")
+```
+
+## Clean-up
+
+```{r}
+dbDisconnect(con)
 ```
 

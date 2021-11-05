@@ -253,85 +253,165 @@ FROM payment as p
 
 
 ```r
-dbGetQuery(con, "SELECT COUNT (*)
+dbGetQuery(con, "SELECT COUNT (*) as Number_Rows
     FROM rental")
 ```
 
 ```
-##   COUNT (*)
-## 1     16044
+##   Number_Rows
+## 1       16044
 ```
 
 ## Exercise 6.2
 
 
 ```r
-dbGetQuery(con, "SELECT customer_id, COUNT(*)
+dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
         LIMIT 10")
 ```
 
 ```
-##    customer_id COUNT(*)
-## 1            1       32
-## 2            2       27
-## 3            3       26
-## 4            4       22
-## 5            5       38
-## 6            6       28
-## 7            7       33
-## 8            8       24
-## 9            9       23
-## 10          10       25
+##    customer_id Number_Rentals
+## 1            1             32
+## 2            2             27
+## 3            3             26
+## 4            4             22
+## 5            5             38
+## 6            6             28
+## 7            7             33
+## 8            8             24
+## 9            9             23
+## 10          10             25
 ```
 
 ## Exercise 6.3
 
 
 ```r
-dbGetQuery(con, "SELECT customer_id, COUNT(*)
+dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
-        ORDER BY COUNT(*) DESC
+        ORDER BY Number_Rentals DESC
         LIMIT 10")
 ```
 
 ```
-##    customer_id COUNT(*)
-## 1          148       46
-## 2          526       45
-## 3          236       42
-## 4          144       42
-## 5           75       41
-## 6          469       40
-## 7          197       40
-## 8          468       39
-## 9          178       39
-## 10         137       39
+##    customer_id Number_Rentals
+## 1          148             46
+## 2          526             45
+## 3          236             42
+## 4          144             42
+## 5           75             41
+## 6          469             40
+## 7          197             40
+## 8          468             39
+## 9          178             39
+## 10         137             39
 ```
 
 ## Exercise 6.4
 
 
 ```r
-dbGetQuery(con, "SELECT customer_id, COUNT(*)
+dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
-        HAVING COUNT(*) > 40
-        ORDER BY COUNT(*) DESC")
+        HAVING Number_Rentals >= 40
+        ORDER BY Number_Rentals DESC")
 ```
 
 ```
-##   customer_id COUNT(*)
-## 1         148       46
-## 2         526       45
-## 3         236       42
-## 4         144       42
-## 5          75       41
+##   customer_id Number_Rentals
+## 1         148             46
+## 2         526             45
+## 3         236             42
+## 4         144             42
+## 5          75             41
+## 6         469             40
+## 7         197             40
 ```
 
 ## Exercise 7
 
 
+```r
+dbGetQuery(con, "SELECT MAX(amount) as max_amount,
+    MIN(amount) as min_amount,
+    AVG(amount) as avg_amount,
+    SUM(amount) as sum_amount
+    FROM payment
+    LIMIT 10")
+```
+
+```
+##   max_amount min_amount avg_amount sum_amount
+## 1      11.99       0.99   4.169775    4824.43
+```
+
+## Exercise 7.1
+
+
+```r
+dbGetQuery(con, "SELECT customer_id,
+    MAX(amount) as max_amount,
+    MIN(amount) as min_amount,
+    AVG(amount) as avg_amount,
+    SUM(amount) as sum_amount
+    FROM payment
+    GROUP BY customer_id
+    LIMIT 10")
+```
+
+```
+##    customer_id max_amount min_amount avg_amount sum_amount
+## 1            1       2.99       0.99   1.990000       3.98
+## 2            2       4.99       4.99   4.990000       4.99
+## 3            3       2.99       1.99   2.490000       4.98
+## 4            5       6.99       0.99   3.323333       9.97
+## 5            6       4.99       0.99   2.990000       8.97
+## 6            7       5.99       0.99   4.190000      20.95
+## 7            8       6.99       6.99   6.990000       6.99
+## 8            9       4.99       0.99   3.656667      10.97
+## 9           10       4.99       4.99   4.990000       4.99
+## 10          11       6.99       6.99   6.990000       6.99
+```
+
+## Exercise 7.2
+
+
+```r
+dbGetQuery(con, "SELECT customer_id,
+    COUNT (*) as number_payments,
+    MAX(amount) as max_amount,
+    MIN(amount) as min_amount,
+    AVG(amount) as avg_amount,
+    SUM(amount) as sum_amount
+    FROM payment
+    GROUP BY customer_id
+    HAVING COUNT(*) > 5
+    LIMIT 10")
+```
+
+```
+##    customer_id number_payments max_amount min_amount avg_amount sum_amount
+## 1           19               6       9.99       0.99   4.490000      26.94
+## 2           53               6       9.99       0.99   4.490000      26.94
+## 3          109               7       7.99       0.99   3.990000      27.93
+## 4          161               6       5.99       0.99   2.990000      17.94
+## 5          197               8       3.99       0.99   2.615000      20.92
+## 6          207               6       6.99       0.99   2.990000      17.94
+## 7          239               6       7.99       2.99   5.656667      33.94
+## 8          245               6       8.99       0.99   4.823333      28.94
+## 9          251               6       4.99       1.99   3.323333      19.94
+## 10         269               6       6.99       0.99   3.156667      18.94
+```
+
+## Clean-up
+
+
+```r
+dbDisconnect(con)
+```
 
