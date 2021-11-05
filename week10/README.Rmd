@@ -1,0 +1,52 @@
+---
+title: "Lab 10"
+author: "Audrey Omidsalar"
+date: "11/5/2021"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    keep_md: yes
+  github_document:
+  always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library('RSQLite')
+library('DBI')
+```
+
+## Setup
+```{r downloading}
+# Initialize a temporary in memory database
+con <- dbConnect(SQLite(), ":memory:")
+# Download tables
+actor <- read.csv("https://raw.githubusercontent.com/ivanceras/sakila/master/csv-sakila-db/actor.csv")
+rental <- read.csv("https://raw.githubusercontent.com/ivanceras/sakila/master/csv-sakila-db/rental.csv")
+customer <- read.csv("https://raw.githubusercontent.com/ivanceras/sakila/master/csv-sakila-db/customer.csv")
+payment <- read.csv("https://raw.githubusercontent.com/ivanceras/sakila/master/csv-sakila-db/payment_p2007_01.csv")
+
+# Copy data.frames to database
+dbWriteTable(con, "actor", actor)
+dbWriteTable(con, "rental", rental)
+dbWriteTable(con, "customer", customer)
+dbWriteTable(con, "payment", payment)
+```
+List tables
+```{r list-tables}
+dbListTables(con)
+```
+#### Getting information about the *actor* table
+```{r pragma}
+dbGetQuery(con ,"PRAGMA table_info(actor)")
+```
+
+## Exercise 1
+```{r ex-1}
+#dbGetQuery(con , "SELECT actor ID, first name, last name
+#FROM actor
+#ORDER by last name, first name")
+```
+
+
