@@ -277,7 +277,7 @@ dbWriteTable(con, &quot;payment&quot;, payment)</code></pre>
 </div>
 <div id="exercise-1" class="section level2">
 <h2>Exercise 1</h2>
-<p>Retrieve the actor ID, first name and last name for all actors using the actor table. Sort by last name and then by first name. Use LIMIT (head() in R) to output the top 5.</p>
+<p>Retrieve the actor ID, first name and last name for all actors using the actor table. Sort by last name and then by first name. (Using LIMIT (head() in R) to output the top 5)</p>
 <pre class="r"><code>dbGetQuery(con , &quot;SELECT actor_id, first_name, last_name
 FROM actor
 ORDER by last_name, first_name /* comments can be added
@@ -292,6 +292,7 @@ LIMIT 5&quot;)</code></pre>
 </div>
 <div id="exercise-2" class="section level2">
 <h2>Exercise 2</h2>
+<p>Retrieve the actor ID, first name, and last name for actors whose last name equals ‘WILLIAMS’ or ‘DAVIS’. Using LIMIT to output the top 5</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT actor_id, first_name, last_name
 FROM actor
 WHERE last_name IN (&#39;WILLIAMS&#39;, &#39;DAVIS&#39;)&quot;)</code></pre>
@@ -305,6 +306,7 @@ WHERE last_name IN (&#39;WILLIAMS&#39;, &#39;DAVIS&#39;)&quot;)</code></pre>
 </div>
 <div id="exercise-3" class="section level2">
 <h2>Exercise 3</h2>
+<p>Write a query against the rental table that returns the IDs of the customers who rented a film on July 5, 2005 (use the rental.rental_date column, and you can use the date() function to ignore the time component). Include a single row for each distinct customer ID.</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT DISTINCT customer_id
 FROM rental
 WHERE date(rental_date)= &#39;2005-07-05&#39;
@@ -340,6 +342,7 @@ WHERE date(rental_date)= &#39;2005-07-05&#39;
 </div>
 <div id="exercise-4.1" class="section level2">
 <h2>Exercise 4.1</h2>
+<p>Construct a query that retrieves all rows from the payment table where the amount is either 1.99, 7.99, 9.99.</p>
 <pre class="r"><code>q &lt;- dbSendQuery(con, &quot;SELECT *
 FROM payment
 WHERE amount IN (1.99, 7.99, 9.99)&quot;)
@@ -360,6 +363,7 @@ dbClearResult(q)</code></pre>
 </div>
 <div id="exercise-4.2" class="section level2">
 <h2>Exercise 4.2</h2>
+<p>Construct a query that retrieves all rows from the payment table where the amount is greater then 5</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT *
       FROM payment
       WHERE amount &gt; 5
@@ -389,6 +393,7 @@ dbClearResult(q)</code></pre>
 </div>
 <div id="exercise-4.3" class="section level2">
 <h2>Exercise 4.3</h2>
+<p>Construct a query that retrieves all rows from the payment table where the amount is greater then 5 and less then 8</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT *
       FROM payment
       WHERE amount &gt; 5 AND amount &lt; 8
@@ -402,6 +407,7 @@ dbClearResult(q)</code></pre>
 </div>
 <div id="exercise-5" class="section level2">
 <h2>Exercise 5</h2>
+<p>Retrieve all the payment IDs and their amount from the customers whose last name is ‘DAVIS’.</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT p.payment_id, p.amount
 FROM payment as p
   INNER JOIN customer as c
@@ -414,6 +420,7 @@ FROM payment as p
 </div>
 <div id="exercise-6.1" class="section level2">
 <h2>Exercise 6.1</h2>
+<p>Use COUNT(*) to count the number of rows in rental</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT COUNT (*) as Number_Rows
     FROM rental&quot;)</code></pre>
 <pre><code>##   Number_Rows
@@ -421,6 +428,7 @@ FROM payment as p
 </div>
 <div id="exercise-6.2" class="section level2">
 <h2>Exercise 6.2</h2>
+<p>Use COUNT(*) and GROUP BY to count the number of rentals for each customer_id</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
@@ -439,6 +447,7 @@ FROM payment as p
 </div>
 <div id="exercise-6.3" class="section level2">
 <h2>Exercise 6.3</h2>
+<p>Repeat the previous query and sort by the count in descending order</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
@@ -458,6 +467,7 @@ FROM payment as p
 </div>
 <div id="exercise-6.4" class="section level2">
 <h2>Exercise 6.4</h2>
+<p>Repeat the previous query but use HAVING to only keep the groups with 40 or more.</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT customer_id, COUNT(*) as Number_Rentals
         FROM rental
         GROUP BY customer_id
@@ -474,6 +484,7 @@ FROM payment as p
 </div>
 <div id="exercise-7" class="section level2">
 <h2>Exercise 7</h2>
+<p>Calculate max, min, avg, and sum for the payment table</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT MAX(amount) as max_amount,
     MIN(amount) as min_amount,
     AVG(amount) as avg_amount,
@@ -485,6 +496,7 @@ FROM payment as p
 </div>
 <div id="exercise-7.1" class="section level2">
 <h2>Exercise 7.1</h2>
+<p>Modify the above query to do those calculations for each customer_id</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT customer_id,
     MAX(amount) as max_amount,
     MIN(amount) as min_amount,
@@ -507,6 +519,7 @@ FROM payment as p
 </div>
 <div id="exercise-7.2" class="section level2">
 <h2>Exercise 7.2</h2>
+<p>Modify the above query to only keep the customer_ids that have more then 5 payments</p>
 <pre class="r"><code>dbGetQuery(con, &quot;SELECT customer_id,
     COUNT (*) as number_payments,
     MAX(amount) as max_amount,
@@ -531,6 +544,7 @@ FROM payment as p
 </div>
 <div id="clean-up" class="section level2">
 <h2>Clean-up</h2>
+<p>Run the following chunk to disconnect from the connection.</p>
 <pre class="r"><code>dbDisconnect(con)</code></pre>
 </div>
 

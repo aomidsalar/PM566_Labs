@@ -55,7 +55,7 @@ dbGetQuery(con ,"PRAGMA table_info(actor)")
 
 ## Exercise 1
 
-Retrieve the actor ID, first name and last name for all actors using the actor table. Sort by last name and then by first name. Use LIMIT (head() in R) to output the top 5.
+Retrieve the actor ID, first name and last name for all actors using the actor table. Sort by last name and then by first name. (Using LIMIT (head() in R) to output the top 5)
 
 
 ```r
@@ -76,6 +76,8 @@ LIMIT 5")
 ```
 
 ## Exercise 2
+Retrieve the actor ID, first name, and last name for actors whose last name equals ‘WILLIAMS’ or ‘DAVIS’.
+Using LIMIT to output the top 5
 
 
 ```r
@@ -95,6 +97,7 @@ WHERE last_name IN ('WILLIAMS', 'DAVIS')")
 ```
 
 ## Exercise 3
+Write a query against the rental table that returns the IDs of the customers who rented a film on July 5, 2005 (use the rental.rental_date column, and you can use the date() function to ignore the time component). Include a single row for each distinct customer ID.
 
 
 ```r
@@ -136,6 +139,7 @@ WHERE date(rental_date)= '2005-07-05'
 ```
 
 ## Exercise 4.1
+Construct a query that retrieves all rows from the payment table where the amount is either 1.99, 7.99, 9.99.
 
 
 ```r
@@ -165,6 +169,7 @@ dbClearResult(q)
 ```
 
 ## Exercise 4.2
+Construct a query that retrieves all rows from the payment table where the amount is greater then 5
 
 
 ```r
@@ -213,6 +218,7 @@ dbGetQuery(con, "SELECT staff_id, COUNT (*) as N
 ```
 
 ## Exercise 4.3
+Construct a query that retrieves all rows from the payment table where the amount is greater then 5 and less then 8
 
 
 ```r
@@ -232,6 +238,7 @@ dbGetQuery(con, "SELECT *
 ```
 
 ## Exercise 5
+Retrieve all the payment IDs and their amount from the customers whose last name is ‘DAVIS’.
 
 
 ```r
@@ -250,6 +257,7 @@ FROM payment as p
 ```
 
 ## Exercise 6.1
+Use COUNT(*) to count the number of rows in rental
 
 
 ```r
@@ -263,6 +271,7 @@ dbGetQuery(con, "SELECT COUNT (*) as Number_Rows
 ```
 
 ## Exercise 6.2
+Use COUNT(*) and GROUP BY to count the number of rentals for each customer_id
 
 
 ```r
@@ -287,6 +296,7 @@ dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
 ```
 
 ## Exercise 6.3
+Repeat the previous query and sort by the count in descending order
 
 
 ```r
@@ -312,6 +322,7 @@ dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
 ```
 
 ## Exercise 6.4
+Repeat the previous query but use HAVING to only keep the groups with 40 or more.
 
 
 ```r
@@ -334,6 +345,7 @@ dbGetQuery(con, "SELECT customer_id, COUNT(*) as Number_Rentals
 ```
 
 ## Exercise 7
+Calculate max, min, avg, and sum for the payment table
 
 
 ```r
@@ -351,6 +363,7 @@ dbGetQuery(con, "SELECT MAX(amount) as max_amount,
 ```
 
 ## Exercise 7.1
+Modify the above query to do those calculations for each customer_id
 
 
 ```r
@@ -379,6 +392,7 @@ dbGetQuery(con, "SELECT customer_id,
 ```
 
 ## Exercise 7.2
+Modify the above query to only keep the customer_ids that have more then 5 payments
 
 
 ```r
@@ -409,6 +423,7 @@ dbGetQuery(con, "SELECT customer_id,
 ```
 
 ## Clean-up
+Run the following chunk to disconnect from the connection.
 
 
 ```r
