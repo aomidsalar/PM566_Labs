@@ -10,7 +10,7 @@ output:
   github_document:
   always_allow_html: true
 ---
-**See my lab output** [**here**]()
+**See my lab output** [**here**](https://ghcdn.rawgit.org/aomidsalar/PM566_Labs/main/week11/README.html)
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library('plotly')
