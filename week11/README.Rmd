@@ -10,7 +10,7 @@ output:
   github_document:
   always_allow_html: true
 ---
-
+**See my lab output** [**here**]()
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library('plotly')
@@ -19,6 +19,8 @@ library(tidyverse)
 library(dplyr)
 library(knitr)
 library(widgetframe)
+library(zoo)
+##ghcdn.rawgit.org and add html url
 ```
 
 # I. Reading and processing the New York Times (NYT) state-level COVID-19 data
@@ -48,6 +50,10 @@ cv_states <- merge(cv_states, state_pops, by="state")
 ```
 
 ## 2. Look at the data
+- Inspect the dimensions, head, and tail of the data
+- Inspect the structure of each variables. Are they in the correct format? 
+
+*The data looks to be in the correct formatting. It has been reordered alphabetically by state and in chronological order, so the earlier observations from Alabama appear from the `head` command, and the more recent observations from Wyoming appear from the `tail` command.*
 
 ```{r}
 dim(cv_states)
@@ -62,6 +68,8 @@ str(cv_states)
 * Order the data first by state, second by date
 * Confirm the variables are now correctly formatted
 * Inspect the range values for each variable. What is the date range? The range of cases and deaths?
+
+*The date range is from January 1, 2020 to the present day (`rmax(cv_states$date)[[1]]`). The range of cases is from 24224 to 5007632. The range of deaths is 255 to 74189.*
 
 
 ```{r}
@@ -91,6 +99,23 @@ max(cv_states$date)
 ```
 
 ## 4. Add `new_cases` and `new_deaths` and correct outliers
+
+- Add variables for new cases, new_cases, and new deaths, new_deaths:
+
+  - Hint: You can set new_cases equal to the difference between cases on date i and date i-1, starting on date i=2
+Filter to dates after June 1, 2021
+
+- Use plotly for EDA: See if there are outliers or values that don’t make sense for new_cases and new_deaths. Which states and which dates have strange values?
+
+- Correct outliers: Set negative values for new_cases or new_deaths to 0
+
+- Recalculate cases and deaths as cumulative sum of updated new_cases and new_deaths
+
+- Get the rolling average of new cases and new deaths to smooth over time
+
+- Inspect data again interactively
+
+*After getting the rolling averages, the graph looks a lot more smooth and is easier to read. Florida and Texas have the highest new deaths, and Oklahoma had a recent spike in October 2021.*
 
 ```{r}
 # Add variables for new_cases and new_deaths:
@@ -198,6 +223,8 @@ cv_states_today = subset(cv_states, date==max(cv_states$date))
   - Add layout information to title the chart and the axes
   - Enable `hovermode = "compare"`
   
+*Washington DC was removed from the scatterplot because it was a major outlier with high population density. Once that was removed, it was a lot easier to see the differences between the state-level data. New Jersey, Rhode Island, Massachusetts, and Connecticut stand out to me as states with both a relatively high population density and deaths per 100k.*
+  
 ```{r}
 ### FINISH CODE HERE
 
@@ -229,7 +256,7 @@ cv_states_today_filter %>%
           size = ~population, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
           hoverinfo = 'text',
           text = ~paste( paste(state, ":", sep=""), paste(" Cases per 100k: ", per100k, sep="") , 
-                         paste(" Deaths per 100k: ", deathsper100k sep=""), sep = "<br>")) %>%
+                         paste(" Deaths per 100k: ", deathsper100k, sep=""), sep = "<br>")) %>%
   layout(title = "Population-normalized COVID-19 deaths (per 100k) vs. population density for US states",
                   yaxis = list(title = "Deaths per 100k"), xaxis = list(title = "Population Density"),
          hovermode = "compare")
@@ -240,6 +267,8 @@ cv_states_today_filter %>%
 - For `pop_density` vs. `newdeathsper100k` create a chart with the same variables using `gglot_ly()`
 - Explore the pattern between $x$ and $y$ using `geom_smooth()`
   - Explain what you see. Do you think `pop_density` is a correlate of `newdeathsper100k`?
+  
+*There appears to be a slight positive correlation between `pop_density` and `newdeathsper100k`, but that is likely due to the outlier states with the high population density pulling the best fit curve upwards. Between a `pop_density` of 1 and 250, there does not appear to be a clear positive or negative correlation.*
 
 ```{r}
 ### FINISH CODE HERE
@@ -251,8 +280,13 @@ ggplotly(p)
 
 - Create a line chart of the `naive_CFR` for all states over time using `plot_ly()`
   - Use the zoom and pan tools to inspect the `naive_CFR` for the states that had an increase in September. How have they changed over time?
+
+*States such as Louisiana, Hawaii, South Carolina, and Florida had an increase in September. Hawaii had interesting variations in naive_CFR where it decreased around mid-July and increased in September, plateauing out in late October and November.*
+
 - Create one more line chart, for Florida only, which shows `new_cases` and `new_deaths` together in one plot. Hint: use `add_layer()`
   - Use hoverinfo to "eyeball" the approximate peak of deaths and peak of cases. What is the time delay between the peak of cases and the peak of deaths?
+  
+*The approximate peak of cases is August 16, 2021 (with a second peak on September 13, 2021) and the approximate peak of deaths is September 20, 2021. There appears to be about a month difference between these two values.*
   
 ```{r}
 ### FINISH CODE HERE
@@ -269,9 +303,17 @@ cv_states %>% filter(state=="Florida") %>% plot_ly(x = ~date, y = ~new_cases, ty
 
 Create a heatmap to visualize `new_cases` for each state on each date greater than June 15th, 2021
 - Start by mapping selected features in the dataframe into a matrix using the **tidyr** package function `pivot_wider()`, naming the rows and columns, as done in the lecture notes
-- Use `plot_ly()` to create a heatmap out of this matrix. Which states stand out? *States that have large populations or with large outbreaks stand out (California, Florida, Texas)*
-- Repeat with `newper100k` variable. Now which states stand out? *Now, there are more states standing out; for example, Alaska had a high case rate, as well as some southern states (Mississippi, Louisiana, South Carolina).*
+- Use `plot_ly()` to create a heatmap out of this matrix. Which states stand out?
+
+*States that have large populations or with large outbreaks stand out (California, Florida, Texas)*
+
+- Repeat with `newper100k` variable. Now which states stand out? 
+
+*Now, there are more states standing out; for example, Alaska had a high case rate, as well as some southern states (Mississippi, Florida, Louisiana, South Carolina, Tennessee).*
+
 - Create a second heatmap in which the pattern of `new_cases` for each state over time becomes more clear by filtering to only look at dates every two weeks 
+
+*The southern states mentioned previously as well as Alaska stand out to me here.*
 
 ```{r}
 ### FINISH CODE HERE
@@ -305,7 +347,7 @@ plot_ly(x=colnames(cv_states_mat2), y=rownames(cv_states_mat2),
 filter_dates <- seq(as.Date("2021-06-15"), as.Date("2021-11-01"), by="2 weeks")
 
 cv_states_mat <- cv_states %>% select(state, date, newper100k) %>% filter(date %in% filter_dates)
-cv_states_mat2 <- as.data.frame(pivot_wider(cv_states_mat, names_from = state, values_from = new_cases))
+cv_states_mat2 <- as.data.frame(pivot_wider(cv_states_mat, names_from = state, values_from = newper100k))
 rownames(cv_states_mat2) <- cv_states_mat2$date
 cv_states_mat2$date <- NULL
 cv_states_mat2 <- as.matrix(cv_states_mat2)
@@ -323,6 +365,8 @@ plot_ly(x=colnames(cv_states_mat2), y=rownames(cv_states_mat2),
 - Compare with a map visualizing the `naive_CFR` by state on most recent date
 - Plot the two maps together using `subplot()`. Make sure the shading is for the same range of values (google is your friend for this)
 - Describe the difference in the pattern of the CFR.
+
+*Overall, the maximum national CFR appears to have decreased from October 15th to the most recent date. This is most evident in Alaska which had 123.7 cases per 100k on October 15th, and that has decreased more than half (58.7). On the other hand, there are some states experiencing increases between the two dates (New Mexico, Arizona, Vermont, and New Hampshire). *
 
 ```{r}
 ### For specified date
@@ -355,7 +399,8 @@ fig <- plot_geo(cv_per100, locationmode = 'USA-states') %>%
     z = ~newper100k, text = ~hover, locations = ~state,
     color = ~newper100k, colors = 'Purples'
   )
-fig <- fig %>% colorbar(title = paste0("Cases per 100k: ", pick.date), limits = c(0,shadeLimit))
+#fig <- fig %>% colorbar(title = paste0("Cases per 100k: ", pick.date), limits = c(0,shadeLimit))
+fig <- fig %>% colorbar(title = paste0("Cases per 100k: "), limits = c(0,shadeLimit))
 fig <- fig %>% layout(
     title = paste('Cases per 100k by State as of ', pick.date, '<br>(Hover for value)'),
     geo = set_map_details
@@ -388,16 +433,23 @@ fig <- plot_geo(cv_per100, locationmode = 'USA-states') %>%
     z = ~newper100k, text = ~hover, locations = ~state,
     color = ~newper100k, colors = 'Purples'
   )
-fig <- fig %>% colorbar(title = paste0("Cases per 100k: ", Sys.Date()), limits = c(0,shadeLimit))
+#fig <- fig %>% colorbar(title = paste0("Cases per 100k: ", Sys.Date()), limits = c(0,shadeLimit))
+fig <- fig %>% colorbar(title = paste0("Cases per 100k: "), limits = c(0,shadeLimit))
+#fig <- fig %>% layout(
+#    title = paste('Cases per 100k by State as of', Sys.Date(), '<br>(Hover for value)'),
+##    geo = set_map_details
+#  )
 fig <- fig %>% layout(
-    title = paste('Cases per 100k by State as of', Sys.Date(), '<br>(Hover for value)'),
     geo = set_map_details
   )
-fig_Today <- fig
-
+fig_Today <- fig %>% hide_colorbar()
 
 ### Plot together 
-subplot(fig_pick.date, fig_Today, titleX = "Cases per 100k per State as of October 15th, 2021",titleY = "Cases per 100k per State as of November 11th, 2021",nrows = 2, margin = .05)
+s1 <- subplot(fig_pick.date, fig_Today, nrows=2)%>%  
+  layout(annotations = list(
+    list(text = Sys.Date(), showarrow = F, xref='paper', yref='paper')) 
+  ) 
+s1
+#subplot(fig_pick.date,fig_Today,nrows = 2, margin = .05)
 
 ```
-
